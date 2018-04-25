@@ -3,7 +3,8 @@
 const Type = require('./type')
 
 const types = {
-  gcounter: require('./gcounter')
+  gcounter: require('./gcounter'),
+  pncounter: require('./pncounter')
 }
 
 module.exports = (typeName) => {

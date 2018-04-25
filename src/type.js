@@ -24,6 +24,5 @@ module.exports = (Type) => {
     }
 
     return ret
-
   }
 }

@@ -8,33 +8,41 @@ chai.use(dirtyChai)
 
 const CRDT = require('../')
 
-describe('gcounter', () => {
+describe('pncounter', () => {
 
   describe('local', () => {
-    let GCounter
-    let gcounter
+    let PNCounter
+    let pncounter
     it ('type can be created', () => {
-      GCounter = CRDT('gcounter')
+      PNCounter = CRDT('pncounter')
     })
 
     it ('can be instantiated', () => {
-      gcounter = GCounter('id1')
+      pncounter = PNCounter('id1')
     })
 
     it('starts with a value of 0', () => {
-      expect(gcounter.value()).to.equal(0)
+      expect(pncounter.value()).to.equal(0)
     })
 
     it('can be incremented', () => {
-      gcounter.inc()
+      pncounter.inc()
     })
 
     it('and the value is incremented', () => {
-      expect(gcounter.value()).to.equal(1)
+      expect(pncounter.value()).to.equal(1)
+    })
+
+    it('can be decremented', () => {
+      pncounter.dec()
+    })
+
+    it('and the value is decremented', () => {
+      expect(pncounter.value()).to.equal(0)
     })
   })
 
-  describe('together', () => {
+  describe.skip('together', () => {
     let GCounter = CRDT('gcounter')
 
     let replica1, replica2
