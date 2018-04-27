@@ -4,7 +4,8 @@ const Type = require('./type')
 
 const types = {
   gcounter: require('./gcounter'),
-  pncounter: require('./pncounter')
+  pncounter: require('./pncounter'),
+  lexcounter: require('./lexcounter')
 }
 
 module.exports = (typeName) => {
