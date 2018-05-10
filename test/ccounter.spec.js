@@ -43,13 +43,13 @@ describe('ccounter', () => {
   })
 
   describe('together', () => {
-    let GCounter = CRDT('ccounter')
+    let CCounter = CRDT('ccounter')
 
     let replica1, replica2
     let deltas = [[], []]
     before(() => {
-      replica1 = GCounter('id1')
-      replica2 = GCounter('id2')
+      replica1 = CCounter('id1')
+      replica2 = CCounter('id2')
     })
 
     it('can be incremented', () => {
