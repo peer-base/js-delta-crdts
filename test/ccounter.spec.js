@@ -53,11 +53,9 @@ describe('ccounter', () => {
     })
 
     it('can be incremented', () => {
-      deltas[0].push(replica1.inc())
-      deltas[0].push(replica1.inc())
+      deltas[0].push(replica1.inc(2))
       deltas[0].push(replica1.dec())
-      deltas[0].push(replica1.inc())
-      deltas[1].push(replica2.inc())
+      deltas[0].push(replica1.inc(2))
       deltas[1].push(replica2.inc())
       deltas[1].push(replica2.dec())
       deltas[1].push(replica2.inc())
