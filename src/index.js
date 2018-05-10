@@ -5,7 +5,7 @@ const Type = require('./type')
 const types = {
   gcounter: require('./gcounter'),
   pncounter: require('./pncounter'),
-  lexcounter: require('./lexcounter')
+  lexcounter: require('./lexcounter'),
   ccounter: require('./ccounter'),
 }
 

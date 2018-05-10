@@ -30,7 +30,9 @@ module.exports = class DotContext {
 
   makeDot (id) {
     const value = this.cc.get(id) || 0
-    this.cc.set(id, value + 1)
+    const newValue = value + 1
+    this.cc.set(id, newValue)
+    return [id, newValue]
   }
 
   insertDot (key, value, compactNow) {

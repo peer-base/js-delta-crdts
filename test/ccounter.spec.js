@@ -42,8 +42,8 @@ describe('ccounter', () => {
     })
   })
 
-  describe.skip('together', () => {
-    let GCounter = CRDT('gcounter')
+  describe('together', () => {
+    let GCounter = CRDT('ccounter')
 
     let replica1, replica2
     let deltas = [[], []]
@@ -55,7 +55,11 @@ describe('ccounter', () => {
     it('can be incremented', () => {
       deltas[0].push(replica1.inc())
       deltas[0].push(replica1.inc())
+      deltas[0].push(replica1.dec())
+      deltas[0].push(replica1.inc())
       deltas[1].push(replica2.inc())
+      deltas[1].push(replica2.inc())
+      deltas[1].push(replica2.dec())
       deltas[1].push(replica2.inc())
     })
 
