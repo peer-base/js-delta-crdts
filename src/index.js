@@ -7,7 +7,8 @@ const types = {
   pncounter: require('./pncounter'),
   lexcounter: require('./lexcounter'),
   ccounter: require('./ccounter'),
-  gset: require('./gset')
+  gset: require('./gset'),
+  '2pset': require('./2pset')
 }
 
 module.exports = (typeName) => {
