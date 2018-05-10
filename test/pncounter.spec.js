@@ -42,7 +42,7 @@ describe('pncounter', () => {
     })
   })
 
-  describe.skip('together', () => {
+  describe('together', () => {
     let GCounter = CRDT('gcounter')
 
     let replica1, replica2
