@@ -90,10 +90,12 @@ module.exports = class DotKernel {
         }
       } else if (!this.ds.has(key) && !this.cc.dotIn(dot)) {
         ds.set(key, other.ds.get(key))
-      } else if (joinValues) {
+      } else {
         // in both
-        const joinedValue = joinValues(ds.get(key), other.ds.get(key))
-        ds.set(key, joinedValue)
+
+        if (joinValues) {
+          ds.set(key, joinValues(ds.get(key), other.ds.get(key)))
+        }
       }
     }
 
