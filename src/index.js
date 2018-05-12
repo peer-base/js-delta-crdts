@@ -14,7 +14,8 @@ const types = {
   mvreg: require('./mvreg'),
   ewflag: require('./ewflag'),
   dwflag: require('./dwflag'),
-  rwlwwset: require('./rwlwwset')
+  rwlwwset: require('./rwlwwset'),
+  lwwreg: require('./lwwreg')
 }
 
 module.exports = (typeName) => {
