@@ -8,40 +8,40 @@ chai.use(dirtyChai)
 
 const CRDT = require('../')
 
-describe('ewflag', () => {
+describe('dwflag', () => {
 
   describe('local', () => {
-    let EWFlag
-    let ewflag
+    let DWFlag
+    let dwflag
     it ('type can be created', () => {
-      EWFlag = CRDT('ewflag')
+      DWFlag = CRDT('dwflag')
     })
 
     it ('can be instantiated', () => {
-      ewflag = EWFlag('id1')
+      dwflag = DWFlag('id1')
     })
 
-    it('starts false', () => {
-      expect(ewflag.value()).to.equal(false)
+    it('starts true', () => {
+      expect(dwflag.value()).to.equal(true)
     })
 
-    it('can be enabled', () => {
-      ewflag.enable()
+    it('can enable', () => {
+      dwflag.enable()
     })
 
     it('and the value is true', () => {
-      expect(ewflag.value()).to.equal(true)
+      expect(dwflag.value()).to.equal(true)
     })
   })
 
   describe('together', () => {
-    let EWFlag = CRDT('ewflag')
+    let DWFlag = CRDT('dwflag')
 
     let replica1, replica2
     let deltas = [[], []]
     before(() => {
-      replica1 = EWFlag('id1')
-      replica2 = EWFlag('id2')
+      replica1 = DWFlag('id1')
+      replica2 = DWFlag('id2')
     })
 
     it('values can be written concurrently', () => {
@@ -65,11 +65,11 @@ describe('ewflag', () => {
     })
 
     it('the first converges', () => {
-      expect(replica1.value()).to.equal(true)
+      expect(replica1.value()).to.equal(false)
     })
 
     it('and the second also converges', () => {
-      expect(replica2.value()).to.equal(true)
+      expect(replica2.value()).to.equal(false)
     })
   })
 })
