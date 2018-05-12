@@ -10,8 +10,7 @@ module.exports = (l, r, join, greaterThan) => {
   if (greaterThan(r[0], l[0])) { return r }
 
   // First is equal, so join second
-  const res = [l[0], join(l[1], r[1])]
-
+  return [l[0], join(l[1], r[1])]
 }
 
 function defaultGreaterThan (a, b) {
