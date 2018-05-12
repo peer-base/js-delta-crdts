@@ -10,7 +10,8 @@ const types = {
   gset: require('./gset'),
   '2pset': require('./2pset'),
   aworset: require('./aworset'),
-  rworset: require('./rworset')
+  rworset: require('./rworset'),
+  mvreg: require('./mvreg')
 }
 
 module.exports = (typeName) => {

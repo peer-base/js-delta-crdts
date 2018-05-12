@@ -71,7 +71,7 @@ module.exports = class DotKernel {
     this.ds = new Map() // clear payload, but retain context
 
     res.cc.compact()
-    return cc
+    return res
   }
 
   join (other, joinValues) {
