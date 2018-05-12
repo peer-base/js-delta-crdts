@@ -11,7 +11,8 @@ const types = {
   '2pset': require('./2pset'),
   aworset: require('./aworset'),
   rworset: require('./rworset'),
-  mvreg: require('./mvreg')
+  mvreg: require('./mvreg'),
+  ewflag: require('./ewflag')
 }
 
 module.exports = (typeName) => {
