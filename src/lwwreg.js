@@ -1,7 +1,5 @@
 'use strict'
 
-const DotKernel = require('./dot-kernel')
-
 module.exports = (id) => ({
   initial () { return [0, undefined] },
   join (s1, s2) {
