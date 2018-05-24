@@ -68,5 +68,39 @@ describe('rga', () => {
       deltas[0].forEach((delta) => replica2.apply(delta))
       expect(replica2.value()).to.deep.equal(['a', 'b', 'c', 'd'])
     })
+
+    it('values can be deleted concurrently', () => {
+      deltas = [[], []]
+      deltas[0].push(replica1.removeAt(1))
+      deltas[1].push(replica2.removeAt(2))
+    })
+
+    it('the first converges', () => {
+      deltas[1].forEach((delta) => replica1.apply(delta))
+      expect(replica1.value()).to.deep.equal(['a', 'd'])
+    })
+
+    it('and the second also converges', () => {
+      deltas[0].forEach((delta) => replica2.apply(delta))
+      expect(replica2.value()).to.deep.equal(['a', 'd'])
+    })
+
+    it('values can be further added concurrently', () => {
+      deltas = [[], []]
+      deltas[0].push(replica1.push('e'))
+      deltas[0].push(replica1.push('f'))
+      deltas[1].push(replica2.push('g'))
+      deltas[1].push(replica2.push('h'))
+    })
+
+    it('the first converges', () => {
+      deltas[1].forEach((delta) => replica1.apply(delta))
+      expect(replica1.value()).to.deep.equal(['a', 'd', 'e', 'f', 'g', 'h'])
+    })
+
+    it('and the second also converges', () => {
+      deltas[0].forEach((delta) => replica2.apply(delta))
+      expect(replica2.value()).to.deep.equal(['a', 'd', 'e', 'f', 'g', 'h'])
+    })
   })
 })

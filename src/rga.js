@@ -21,9 +21,7 @@ module.exports = (id) => ({
     const s2Edges = s2[2]
     const resultEdges = new Map(s1Edges)
 
-    const sortedEdges = sortEdges(s2Edges)
-
-    sortedEdges.forEach((edge) => {
+    sortEdges(s2Edges).forEach((edge) => {
       let [leftEdge, newKey] = edge
       let right = resultEdges.get(leftEdge)
       if (newKey === right) {
@@ -83,33 +81,8 @@ module.exports = (id) => ({
       return [new Map([[elemId, value]]), new Set([]), new Map([[last, elemId], [elemId, undefined]])]
     },
 
-    remove (vertex) {
-      const state = this
-      const [added, removed] = state
-      if (added.has(vertex) && !removed.has(vertex)) {
-        return [null, vertex]
-      }
-    },
-
-    removeAt (pos) {
-      const state = this
-      const removed = state[1]
-      const edges = state[2]
-      let i = -1
-      let id = null
-      while (i < pos) {
-        if (edges.has(id)) {
-          id = edges.get(id)
-        } else {
-          throw new Error('nothing at pos ' + pos)
-        }
-        if (!removed.has(id)) {
-          i++
-        }
-      }
-
-      return exports.mutators.remove.call(state, id)
-    },
+    remove,
+    removeAt,
 
     set (pos, value) {
       const state = this
@@ -166,6 +139,29 @@ module.exports = (id) => ({
   }
 })
 
+function remove (state, vertex) {
+  return [new Map(), new Set([vertex]), new Map()]
+}
+
+function removeAt (state, pos) {
+  const removed = state[1]
+  const edges = state[2]
+  let i = -1
+  let id = null
+  while (i < pos) {
+    if (edges.has(id)) {
+      id = edges.get(id)
+    } else {
+      throw new Error('nothing at pos ' + pos)
+    }
+    if (!removed.has(id)) {
+      i++
+    }
+  }
+
+  return remove(state, id)
+}
+
 function sortEdges (_edges) {
   const edges = new Map(_edges)
   const hasKey = new Set()
@@ -181,6 +177,5 @@ function sortEdges (_edges) {
       }
     }
   }
-
   return sortedEdges
 }
