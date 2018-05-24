@@ -102,5 +102,21 @@ describe('rga', () => {
       deltas[0].forEach((delta) => replica2.apply(delta))
       expect(replica2.value()).to.deep.equal(['a', 'd', 'e', 'f', 'g', 'h'])
     })
+
+    it('values can be inserted concurrently', () => {
+      deltas = [[], []]
+      deltas[0].push(replica1.insertAt(3, 'e.1'))
+      deltas[1].push(replica2.insertAt(3, 'e.2'))
+    })
+
+    it('the first converges', () => {
+      deltas[1].forEach((delta) => replica1.apply(delta))
+      expect(replica1.value()).to.deep.equal(['a', 'd', 'e', 'e.1', 'e.2', 'f', 'g', 'h'])
+    })
+
+    it('and the second also converges', () => {
+      deltas[0].forEach((delta) => replica2.apply(delta))
+      expect(replica2.value()).to.deep.equal(['a', 'd', 'e', 'e.1', 'e.2', 'f', 'g', 'h'])
+    })
   })
 })

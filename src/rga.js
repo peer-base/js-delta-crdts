@@ -19,6 +19,7 @@ module.exports = (id) => ({
   join (s1, s2) {
     const s1Edges = s1[2]
     const s2Edges = s2[2]
+    console.log('s2Edges:', s2Edges)
     const resultEdges = new Map(s1Edges)
 
     sortEdges(s2Edges).forEach((edge) => {
@@ -28,6 +29,7 @@ module.exports = (id) => ({
         return
       }
       while (right && newKey > right) {
+        console.log('going right')
         leftEdge = right
         right = resultEdges.get(right)
       }
@@ -109,32 +111,26 @@ module.exports = (id) => ({
       return pull.values(messages)
     },
 
-    insertAt (pos, value) {
-      const state = this
+    insertAt (state, pos, value) {
       const messages = []
       const edges = state[2]
+      const removed = state[1]
       let i = 0
-      let id = null
+      let left = null
       while (i < pos) {
-        let next
-        if (edges.has(id)) {
-          next = edges.get(id)
+        if (removed.has(left)) {
+          left = edges.get(left)
+          continue
         }
-        if (!next) {
-          next = cuid()
-          messages.push([[id, null, next]])
+        if (edges.has(left)) {
+          left = edges.get(left)
         }
-        id = next
         i++
       }
-      messages.push(exports.mutators.addRight.call(state, id, value))
-      if (!messages.length) {
-        return
-      }
-      if (messages.length === 1) {
-        return messages[0]
-      }
-      return pull.values(messages)
+
+      const newId = cuid()
+      console.log('left is', left, state[0].get(left))
+      return [new Map([[newId, value]]), new Set(), new Map([[left, newId]])]
     }
   }
 })
