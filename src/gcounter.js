@@ -3,7 +3,7 @@
 module.exports = (id) => ({
   initial () { return new Map() },
 
-  valueOf (s) {
+  value (s) {
     return Array.from(s.values()).reduce((acc, current) => acc + current, 0)
   },
 

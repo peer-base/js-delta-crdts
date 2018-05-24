@@ -21,7 +21,7 @@ module.exports = (id) => {
 
       return ret
     },
-    valueOf (s) {
+    value (s) {
       const res = new Set()
       for (let [value, [ts, b]] of s) {
         if (!b) {

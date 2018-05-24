@@ -5,7 +5,7 @@ const DotKernel = require('./dot-kernel')
 module.exports = (id) => ({
   initial () { return new DotKernel() },
   join (s1, s2) { return s1.join(s2) },
-  valueOf (s) {
+  value (s) {
     const keeps = new Map()
     for (let [dot, [key, value]] of s.ds) {
       let previous = keeps.has(key) ? keeps.get(key) : true

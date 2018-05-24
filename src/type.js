@@ -15,9 +15,7 @@ module.exports = (Type) => {
       }
     })
 
-    ret.value = () => {
-      return replica.valueOf(state)
-    }
+    ret.value = () => replica.value(state)
 
     ret.apply = (delta) => {
       state = replica.join(state, delta)

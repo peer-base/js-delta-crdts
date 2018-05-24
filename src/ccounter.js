@@ -6,7 +6,7 @@ module.exports = (id) => {
   return {
     initial () { return new DotKernel() },
     join (s1, s2) { return s1.join(s2) },
-    valueOf (s) {
+    value (s) {
       let acc = 0
       for(let value of s.ds.values()) {
         acc += value

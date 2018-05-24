@@ -17,7 +17,7 @@ module.exports = (id) => {
 
       return res
     },
-    valueOf (s) {
+    value (s) {
       return Array.from(s.values()).reduce((acc, current) => acc + current[1], 0)
     },
     mutators: {

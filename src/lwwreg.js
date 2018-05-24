@@ -10,7 +10,7 @@ module.exports = (id) => ({
     }
     return s2[0] > s1[0] ? s2 : s1
   },
-  valueOf (s) { return s[1] },
+  value (s) { return s[1] },
   mutators: {
     write (s, ts, value) {
       return [ts, value]

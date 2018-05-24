@@ -9,8 +9,8 @@ module.exports = (id) => {
       return [gcounter.initial(), gcounter.initial()]
     },
 
-    valueOf (s) {
-      return gcounter.valueOf(s[0]) - gcounter.valueOf(s[1])
+    value (s) {
+      return gcounter.value(s[0]) - gcounter.value(s[1])
     },
 
     join (s1, s2) {

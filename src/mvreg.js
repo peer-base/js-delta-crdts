@@ -5,7 +5,7 @@ const DotKernel = require('./dot-kernel')
 module.exports = (id) => ({
   initial () { return new DotKernel() },
   join (s1, s2) { return s1.join(s2) },
-  valueOf (s) {
+  value (s) {
     const ret = new Set()
     for (let [dot, value] of s.ds) {
       ret.add(value)

@@ -17,7 +17,7 @@ module.exports = (id) => ({
 
     return ret
   },
-  valueOf (s) { return s[0] },
+  value (s) { return s[0] },
   mutators: {
     add (s, value) {
       const ret = [new Set(), new Set()]
