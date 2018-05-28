@@ -6,7 +6,7 @@ module.exports = (Type) => {
     let state = replica.initial()
     const ret = {}
 
-    Object.keys(replica.mutators).forEach((mutatorName) => {
+    Object.keys(replica.mutators || {}).forEach((mutatorName) => {
       const mutator = replica.mutators[mutatorName]
       ret[mutatorName] = (...args) => {
         const delta = mutator(state, ...args)

@@ -24,3 +24,10 @@ module.exports = (typeName) => {
   if (!type) { throw new Error(`unknown type named ${typeName}`) }
   return Type(type)
 }
+
+module.exports.define = (typeName, impl) => {
+  if (types[typeName]) {
+    throw new Error(`${typeName} is already defined as a type`)
+  }
+  types[typeName] = impl
+}

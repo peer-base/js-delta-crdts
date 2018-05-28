@@ -23,11 +23,19 @@ $ npm install delta-crdts
 const CRDTs = require('delta-crdts')
 ```
 
-## Create a replica
+## Instantiate a type
 
 ```js
 const type = 'rga' // or any of the other supported CRDT types
-const replica = CRDT(type)
+const Type = CRDT(type)
+```
+
+## Create a replica
+
+To create a replica you need pass in a unique node id.
+
+```js
+const replica = Type('node id')
 ```
 
 ## Mutate that replica
@@ -41,7 +49,7 @@ deltas.push(replica.insertAt(0, 'some other value'))
 ## Create a second replica
 
 ```js
-const replica2 = CRDT(type)
+const replica2 = Type('node id 2')
 ```
 
 ## Apply the deltas
@@ -59,7 +67,7 @@ replica2.value() // ['some value', 'some other value']
 ## Initialize a replica from the entire state
 
 ```js
-const replica3 = CRDT(type)
+const replica3 = Type('node id 3')
 replica3.apply(replica2.state())
 ```
 
@@ -70,7 +78,7 @@ You can do concurrent edits on both replicas:
 
 ```js
 // create 2 replicas
-const replicas = [CRDT('rga'), CRDT('rga')]
+const replicas = [Type('id1'), Type('id2')]
 
 // create concurrent deltas
 const deltas = [[], []]
@@ -85,6 +93,26 @@ deltas[0].forEach((delta) => replicas[1].apply(delta))
 deltas[1].forEach((delta) => replicas[0].apply(delta))
 
 assert.deepEqual(replicas[0].value(), replicas[1].value())
+```
+
+## Extend
+
+You can extend the types, creating your own CRDT.
+
+Example:
+
+```js
+const Zero = (id) => ({
+  initial: () => 0,
+  join: (s1, s2) => 0,
+  value: (state) => state
+})
+
+CRDT.define('zero', Zero)
+
+// now you can use it
+
+const replica = CRDT('zero')('node id')
 ```
 
 ## Types
