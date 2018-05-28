@@ -76,13 +76,13 @@ module.exports = class DotKernel {
 
   join (other, joinValues) {
     const keys = new Set()
-    for(let key of this.ds.keys()) { keys.add(key) }
-    for(let key of other.ds.keys()) { keys.add(key) }
+    for (let key of this.ds.keys()) { keys.add(key) }
+    for (let key of other.ds.keys()) { keys.add(key) }
 
     // clone map so that we return something immutable
     const ds = new Map(this.ds)
 
-    for(let key of keys) {
+    for (let key of keys) {
       const dot = DotKernel.dotForKey(key)
       if (!other.ds.has(key)) {
         if (ds.has(key) && other.cc.dotIn(dot)) {

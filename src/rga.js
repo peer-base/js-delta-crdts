@@ -64,7 +64,7 @@ module.exports = (id) => ({
   mutators: {
     addRight (s, beforeVertex, value) {
       const elemId = cuid()
-      const [added, removed, edges] = s
+      const edges = s[2]
       let l = beforeVertex
       let r = edges.get(beforeVertex)
       const newEdges = new Map()
@@ -90,7 +90,6 @@ module.exports = (id) => ({
     removeAt,
 
     insertAt (state, pos, value) {
-      const messages = []
       const edges = state[2]
       const removed = state[1]
       let i = 0

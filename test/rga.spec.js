@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('rga', () => {
-
   describe('local', () => {
     let RGA
     let rga
-    it ('type can be created', () => {
+    it('type can be created', () => {
       RGA = CRDT('rga')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       rga = RGA('id1')
     })
 

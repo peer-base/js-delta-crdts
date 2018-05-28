@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('lwwreg', () => {
-
   describe('local', () => {
     let LWWReg
     let lwwreg
-    it ('type can be created', () => {
+    it('type can be created', () => {
       LWWReg = CRDT('lwwreg')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       lwwreg = LWWReg('id1')
     })
 

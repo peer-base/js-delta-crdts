@@ -1,8 +1,8 @@
 'use strict'
 
 module.exports = (l, r, join, greaterThan) => {
-  if (!l) { return r}
-  if (!r) { return l}
+  if (!l) { return r }
+  if (!r) { return l }
 
   if (!greaterThan) { greaterThan = defaultGreaterThan }
 

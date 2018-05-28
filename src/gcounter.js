@@ -9,12 +9,12 @@ module.exports = (id) => ({
 
   join (s1, s2) {
     const keys = new Set()
-    for(let k of s1.keys()) { keys.add(k) }
-    for(let k of s2.keys()) { keys.add(k) }
+    for (let k of s1.keys()) { keys.add(k) }
+    for (let k of s2.keys()) { keys.add(k) }
 
     const res = new Map()
-    for(let k of keys) {
-      res.set(k, Math.max(s1.get(k) || 0, s2.get(k) || 0) )
+    for (let k of keys) {
+      res.set(k, Math.max(s1.get(k) || 0, s2.get(k) || 0))
     }
 
     return res

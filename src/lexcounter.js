@@ -7,11 +7,11 @@ module.exports = (id) => {
     initial () { return new Map() },
     join (s1, s2) {
       const keys = new Set()
-      for(let k of s1.keys()) { keys.add(k) }
-      for(let k of s2.keys()) { keys.add(k) }
+      for (let k of s1.keys()) { keys.add(k) }
+      for (let k of s2.keys()) { keys.add(k) }
 
       const res = new Map()
-      for(let k of keys) {
+      for (let k of keys) {
         res.set(k, lexjoin(s1.get(k), s2.get(k)), joinValues)
       }
 

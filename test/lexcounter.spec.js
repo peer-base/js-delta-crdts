@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('lexcounter', () => {
-
   describe('local', () => {
     let LexCounter
     let lexcounter
-    it ('type can be created', () => {
+    it('type can be created', () => {
       LexCounter = CRDT('lexcounter')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       lexcounter = LexCounter('id1')
     })
 

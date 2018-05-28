@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('pncounter', () => {
-
   describe('local', () => {
     let PNCounter
     let pncounter
-    it ('type can be created', () => {
+    it('type can be created', () => {
       PNCounter = CRDT('pncounter')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       pncounter = PNCounter('id1')
     })
 

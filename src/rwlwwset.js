@@ -23,7 +23,7 @@ module.exports = (id) => {
     },
     value (s) {
       const res = new Set()
-      for (let [value, [ts, b]] of s) {
+      for (let [value, [, b]] of s) {
         if (!b) {
           res.add(value)
         }
@@ -31,8 +31,8 @@ module.exports = (id) => {
       return res
     },
     mutators: {
-      add (s, ts, value) { return addRemove(s, ts, value, false)},
-      remove (s, ts, value) { return addRemove(s, ts, value, true)}
+      add (s, ts, value) { return addRemove(s, ts, value, false) },
+      remove (s, ts, value) { return addRemove(s, ts, value, true) }
     }
   }
 

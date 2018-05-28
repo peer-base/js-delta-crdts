@@ -8,7 +8,7 @@ module.exports = (id) => {
     join (s1, s2) { return s1.join(s2) },
     value (s) {
       let acc = 0
-      for(let value of s.ds.values()) {
+      for (let value of s.ds.values()) {
         acc += value
       }
       return acc
@@ -25,10 +25,10 @@ module.exports = (id) => {
     }
   }
 
-  function mutateFor(s) {
+  function mutateFor (s) {
     let r = new DotKernel()
     let base = 0
-    for(let it of s.ds) {
+    for (let it of s.ds) {
       const [key, value] = it
       const dot = DotKernel.dotForKey(key)
       const dotId = dot[0]

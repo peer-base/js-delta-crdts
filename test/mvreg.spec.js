@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('mvreg', () => {
-
   describe('local', () => {
     let MVReg
     let mvreg
-    it ('type can be created', () => {
+    it('type can be created', () => {
       MVReg = CRDT('mvreg')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       mvreg = MVReg('id1')
     })
 

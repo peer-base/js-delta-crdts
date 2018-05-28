@@ -7,12 +7,12 @@ module.exports = (id) => ({
   join (s1, s2) { return s1.join(s2) },
   value (s) {
     const keeps = new Map()
-    for (let [dot, [key, value]] of s.ds) {
+    for (let [, [key, value]] of s.ds) {
       let previous = keeps.has(key) ? keeps.get(key) : true
       keeps.set(key, previous && value)
     }
     const ret = new Set()
-    for(let [value, keep] of keeps) {
+    for (let [value, keep] of keeps) {
       if (keep) {
         ret.add(value)
       }

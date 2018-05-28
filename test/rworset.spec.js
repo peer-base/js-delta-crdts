@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('rworset', () => {
-
   describe('local', () => {
     let RWORSet
     let rworset
-    it ('type can be created', () => {
+    it('type can be created', () => {
       RWORSet = CRDT('rworset')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       rworset = RWORSet('id1')
     })
 

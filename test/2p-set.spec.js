@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('2pset', () => {
-
   describe('local', () => {
     let TwoPSet
     let twopset
-    it ('type can be created', () => {
+    it('type can be created', () => {
       TwoPSet = CRDT('2pset')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       twopset = TwoPSet('id1')
     })
 

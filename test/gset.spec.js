@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('ggset', () => {
-
   describe('local', () => {
     let GSet
     let gset
-    it ('type can be created', () => {
+    it('type can be created', () => {
       GSet = CRDT('gset')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       gset = GSet('id1')
     })
 

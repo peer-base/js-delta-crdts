@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('rwlwwset', () => {
-
   describe('local', () => {
     let RWLWWSet
     let rwlwwset
-    it ('type can be created', () => {
+    it('type can be created', () => {
       RWLWWSet = CRDT('rwlwwset')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       rwlwwset = RWLWWSet('id1')
     })
 

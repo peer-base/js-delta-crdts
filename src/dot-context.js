@@ -11,12 +11,12 @@ module.exports = class DotContext {
   dotIn (dot) {
     const [key, value] = dot
     const count = this.cc.get(key)
-    return (value <=  count || this.dc.has(dot))
+    return (value <= count || this.dc.has(dot))
   }
 
   compact () {
     // compact DC to CC if possible
-    for(let dot of this.dc.values()) {
+    for (let dot of this.dc.values()) {
       const [key, value] = dot
       const existing = this.cc.get(key)
       if (!existing) {

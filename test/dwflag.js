@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('dwflag', () => {
-
   describe('local', () => {
     let DWFlag
     let dwflag
-    it ('type can be created', () => {
+    it('type can be created', () => {
       DWFlag = CRDT('dwflag')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       dwflag = DWFlag('id1')
     })
 

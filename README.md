@@ -113,7 +113,8 @@ The following types are built-in:
 |------|------------|----------|------------|
 | Grow-Only Set | `gset` | `.add(element)` | Set |
 | Two-Phase Set | `2pset` |   `.add(element)`, `.remove(element)` | Set |
-| Add-Wins-Observerd-Remove Set | `aworset` | `.add(element)`, `.remove(element)` | Set |
+| Add-Wins-Observed-Remove Set | `aworset` | `.add(element)`, `.remove(element)` | Set |
+| Remove-Wins-Observed-Remove Set | `rworset` | `.add(element)`, `.remove(element)` | Set |
 | Remove-Wins-Last-Write-Wins Set | `rwlwwset` | `.add(element)`, `.remove(element)` | Set |
 
 ## Arrays

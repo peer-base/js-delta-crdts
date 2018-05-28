@@ -9,15 +9,14 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('gcounter', () => {
-
   describe('local', () => {
     let GCounter
     let gcounter
-    it ('type can be created', () => {
+    it('type can be created', () => {
       GCounter = CRDT('gcounter')
     })
 
-    it ('can be instantiated', () => {
+    it('can be instantiated', () => {
       gcounter = GCounter('id1')
     })
 
