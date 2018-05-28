@@ -17,17 +17,22 @@ module.exports = (id) => ({
     new Map([[null, undefined]])], // E
 
   join (s1, s2) {
+    const added = new Map([...s1[0], ...s2[0]])
+    const removed = new Set([...s1[1], ...s2[1]])
+
     const s1Edges = s1[2]
     const s2Edges = s2[2]
     const resultEdges = new Map(s1Edges)
 
     sortEdges(s2Edges).forEach((edge) => {
       let [leftEdge, newKey] = edge
-      let right = resultEdges.get(leftEdge)
-      if (newKey === right) {
+
+      if (s1[0].has(newKey) || s1[1].has(newKey)) {
         return
       }
-      while (right && newKey > right) {
+
+      let right = resultEdges.get(leftEdge)
+      while (right && newKey < right) {
         leftEdge = right
         right = resultEdges.get(right)
       }
@@ -38,7 +43,7 @@ module.exports = (id) => ({
       }
     })
 
-    const newState = [new Map([...s1[0], ...s2[0]]), new Set([...s1[1], ...s2[1]]), resultEdges]
+    const newState = [added, removed, resultEdges]
     return newState
   },
 
@@ -84,57 +89,25 @@ module.exports = (id) => ({
     remove,
     removeAt,
 
-    set (pos, value) {
-      const state = this
+    insertAt (state, pos, value) {
       const messages = []
       const edges = state[2]
-      let i = -1
-      let id = null
-      while (i < pos) {
-        let next
-        if (edges.has(id)) {
-          next = edges.get(id)
-        }
-        if (!next) {
-          next = cuid()
-          messages.push([[id, null, next]])
-        }
-        id = next
-        i++
-      }
-      if (edges.has(id)) {
-        messages.push(exports.mutators.remove.call(state, id)) // remove
-      }
-      messages.push([[id, value, cuid()]])
-      return pull.values(messages)
-    },
-
-    insertAt (pos, value) {
-      const state = this
-      const messages = []
-      const edges = state[2]
+      const removed = state[1]
       let i = 0
-      let id = null
+      let left = null
       while (i < pos) {
-        let next
-        if (edges.has(id)) {
-          next = edges.get(id)
+        if (removed.has(left)) {
+          left = edges.get(left)
+          continue
         }
-        if (!next) {
-          next = cuid()
-          messages.push([[id, null, next]])
+        if (edges.has(left)) {
+          left = edges.get(left)
         }
-        id = next
         i++
       }
-      messages.push(exports.mutators.addRight.call(state, id, value))
-      if (!messages.length) {
-        return
-      }
-      if (messages.length === 1) {
-        return messages[0]
-      }
-      return pull.values(messages)
+
+      const newId = cuid()
+      return [new Map([[newId, value]]), new Set(), new Map([[left, newId]])]
     }
   }
 })
