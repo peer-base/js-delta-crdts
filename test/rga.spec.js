@@ -61,12 +61,12 @@ describe('rga', () => {
 
     it('the first converges', () => {
       deltas[1].forEach((delta) => replica1.apply(delta))
-      expect(replica1.value()).to.deep.equal(['a', 'b', 'c', 'd'])
+      expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
     })
 
     it('and the second also converges', () => {
       deltas[0].forEach((delta) => replica2.apply(delta))
-      expect(replica2.value()).to.deep.equal(['a', 'b', 'c', 'd'])
+      expect(replica2.value()).to.deep.equal(['c', 'd', 'a', 'b'])
     })
 
     it('values can be deleted concurrently', () => {
@@ -77,12 +77,12 @@ describe('rga', () => {
 
     it('the first converges', () => {
       deltas[1].forEach((delta) => replica1.apply(delta))
-      expect(replica1.value()).to.deep.equal(['a', 'd'])
+      expect(replica1.value()).to.deep.equal(['c', 'b'])
     })
 
     it('and the second also converges', () => {
       deltas[0].forEach((delta) => replica2.apply(delta))
-      expect(replica2.value()).to.deep.equal(['a', 'd'])
+      expect(replica2.value()).to.deep.equal(['c', 'b'])
     })
 
     it('values can be further added concurrently', () => {
@@ -95,28 +95,28 @@ describe('rga', () => {
 
     it('the first converges', () => {
       deltas[1].forEach((delta) => replica1.apply(delta))
-      expect(replica1.value()).to.deep.equal(['a', 'd', 'e', 'f', 'g', 'h'])
+      expect(replica1.value()).to.deep.equal(['c', 'b', 'g', 'h', 'e', 'f'])
     })
 
     it('and the second also converges', () => {
       deltas[0].forEach((delta) => replica2.apply(delta))
-      expect(replica2.value()).to.deep.equal(['a', 'd', 'e', 'f', 'g', 'h'])
+      expect(replica2.value()).to.deep.equal(['c', 'b', 'g', 'h', 'e', 'f'])
     })
 
     it('values can be inserted concurrently', () => {
       deltas = [[], []]
-      deltas[0].push(replica1.insertAt(3, 'e.1'))
-      deltas[1].push(replica2.insertAt(3, 'e.2'))
+      deltas[0].push(replica1.insertAt(3, 'g.1'))
+      deltas[1].push(replica2.insertAt(3, 'g.2'))
     })
 
     it('the first converges', () => {
       deltas[1].forEach((delta) => replica1.apply(delta))
-      expect(replica1.value()).to.deep.equal(['a', 'd', 'e', 'e.1', 'e.2', 'f', 'g', 'h'])
+      expect(replica1.value()).to.deep.equal(['c', 'b', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
     })
 
     it('and the second also converges', () => {
       deltas[0].forEach((delta) => replica2.apply(delta))
-      expect(replica2.value()).to.deep.equal(['a', 'd', 'e', 'e.1', 'e.2', 'f', 'g', 'h'])
+      expect(replica2.value()).to.deep.equal(['c', 'b', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
     })
   })
 })
