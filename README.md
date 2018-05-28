@@ -11,6 +11,8 @@
 
 Delta state-based CRDTs in Javascript.
 
+* ([See original paper](https://arxiv.org/abs/1603.01529))
+
 ## Install
 
 ```
