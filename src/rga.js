@@ -89,31 +89,6 @@ module.exports = (id) => ({
     remove,
     removeAt,
 
-    set (pos, value) {
-      const state = this
-      const messages = []
-      const edges = state[2]
-      let i = -1
-      let id = null
-      while (i < pos) {
-        let next
-        if (edges.has(id)) {
-          next = edges.get(id)
-        }
-        if (!next) {
-          next = cuid()
-          messages.push([[id, null, next]])
-        }
-        id = next
-        i++
-      }
-      if (edges.has(id)) {
-        messages.push(exports.mutators.remove.call(state, id)) // remove
-      }
-      messages.push([[id, value, cuid()]])
-      return pull.values(messages)
-    },
-
     insertAt (state, pos, value) {
       const messages = []
       const edges = state[2]
