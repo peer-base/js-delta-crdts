@@ -13,9 +13,11 @@
     "chai": "^4.1.2",
     "dirty-chai": "^2.0.1",
     "mocha": "^5.1.1",
+    "pre-commit": "^1.2.2",
     "standard": "^11.0.1"
   },
   "dependencies": {
     "cuid": "^2.1.1"
-  }
+  },
+  "pre-commit": ["lint", "test"]
 }
