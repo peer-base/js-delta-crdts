@@ -56,6 +56,14 @@ deltas.forEach((delta) => replica2.apply(delta))
 replica2.value() // ['some value', 'some other value']
 ```
 
+## Initialize a replica from the entire state
+
+```js
+const replica3 = CRDT(type)
+replica3.apply(replica2.state())
+```
+
+
 ## Conflict management
 
 You can do concurrent edits on both replicas:
