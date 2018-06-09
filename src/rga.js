@@ -31,7 +31,7 @@ module.exports = (id) => ({
         return
       }
 
-      if (!s1[0].has(leftEdge)) {
+      if (!added.has(leftEdge)) {
         return
       }
 
