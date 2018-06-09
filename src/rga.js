@@ -43,7 +43,9 @@ module.exports = (id) => ({
 
       resultEdges.delete(leftEdge)
       resultEdges.set(leftEdge, newKey)
-      resultEdges.set(newKey, right)
+      if (newKey && right) {
+        resultEdges.set(newKey, right)
+      }
     })
 
     const newState = [added, removed, resultEdges]
@@ -86,7 +88,7 @@ module.exports = (id) => ({
 
       const elemId = cuid()
 
-      return [new Map([[elemId, value]]), new Set([]), new Map([[last, elemId], [elemId, undefined]])]
+      return [new Map([[elemId, value]]), new Set([]), new Map([[last, elemId]])]
     },
 
     remove,
