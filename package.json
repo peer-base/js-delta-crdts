@@ -19,5 +19,8 @@
   "dependencies": {
     "cuid": "^2.1.1"
   },
-  "pre-commit": ["lint", "test"]
+  "pre-commit": [
+    "lint",
+    "test"
+  ]
 }

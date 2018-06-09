@@ -31,16 +31,19 @@ module.exports = (id) => ({
         return
       }
 
+      if (!s1[0].has(leftEdge)) {
+        return
+      }
+
       let right = resultEdges.get(leftEdge)
       while (right && newKey < right) {
         leftEdge = right
         right = resultEdges.get(right)
       }
 
-      if (newKey) {
-        resultEdges.set(leftEdge, newKey)
-        resultEdges.set(newKey, right)
-      }
+      resultEdges.delete(leftEdge)
+      resultEdges.set(leftEdge, newKey)
+      resultEdges.set(newKey, right)
     })
 
     const newState = [added, removed, resultEdges]
