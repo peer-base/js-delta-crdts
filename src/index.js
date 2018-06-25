@@ -20,9 +20,13 @@ const types = {
 }
 
 module.exports = (typeName) => {
+  return Type(module.exports.type(typeName))
+}
+
+module.exports.type = (typeName) => {
   const type = types[typeName]
   if (!type) { throw new Error(`unknown type named ${typeName}`) }
-  return Type(type)
+  return type
 }
 
 module.exports.define = (typeName, impl) => {

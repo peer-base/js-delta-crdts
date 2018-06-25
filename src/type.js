@@ -1,10 +1,12 @@
 'use strict'
 
+const EventEmitter = require('events')
+
 module.exports = (Type) => {
   return (id) => {
     const replica = Type(id)
     let state = replica.initial()
-    const ret = {}
+    const ret = new EventEmitter()
 
     Object.keys(replica.mutators || {}).forEach((mutatorName) => {
       const mutator = replica.mutators[mutatorName]
@@ -19,6 +21,8 @@ module.exports = (Type) => {
 
     ret.apply = (delta) => {
       state = replica.join(state, delta)
+      ret.emit('state changed', state)
+      return state
     }
 
     ret.state = () => state
