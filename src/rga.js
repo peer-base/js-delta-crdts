@@ -36,6 +36,11 @@ module.exports = (id) => ({
       }
 
       let right = resultEdges.get(leftEdge)
+
+      if (right === newKey) {
+        return
+      }
+
       while (right && newKey < right) {
         leftEdge = right
         right = resultEdges.get(right)
