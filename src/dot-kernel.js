@@ -1,8 +1,9 @@
 'use strict'
 
 const DotContext = require('./dot-context')
+const CustomSet = require('./custom-set')
 
-module.exports = class DotKernel {
+class DotKernel {
   constructor (ds, cc) {
     this.ds = ds || new Map()
     this.cc = cc || new DotContext()
@@ -75,6 +76,9 @@ module.exports = class DotKernel {
   }
 
   join (other, joinValues) {
+    if (!(other instanceof DotKernel)) {
+      other = dotKernelFromRaw(other)
+    }
     const keys = new Set()
     for (let key of this.ds.keys()) { keys.add(key) }
     for (let key of other.ds.keys()) { keys.add(key) }
@@ -102,4 +106,19 @@ module.exports = class DotKernel {
     const cc = this.cc.join(other.cc)
     return new DotKernel(ds, cc)
   }
+}
+
+module.exports = DotKernel
+
+function dotKernelFromRaw (base) {
+  const cc = new DotContext(base.cc && base.cc.cc)
+  if (base.cc && base.cc.dc) {
+    const dc = new CustomSet()
+    if (base.cc.dc._refs) {
+      dc._refs = base.cc.dc._refs
+    }
+    cc.dc = dc
+  }
+  const dotKernel = new DotKernel(base.ds, cc)
+  return dotKernel
 }

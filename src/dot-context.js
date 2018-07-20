@@ -43,6 +43,14 @@ module.exports = class DotContext {
   }
 
   join (other) {
+    if (!(other instanceof DotContext)) {
+      const newOther = new DotContext(other.cc)
+      newOther.dc = new CustomSet()
+      if (other.dc._refs) {
+        other.dc._refs = newOther.dc._refs
+      }
+      other = newOther
+    }
     const allKeys = new Set()
     other.compact()
     this.compact()
