@@ -27,14 +27,6 @@ module.exports = (id) => ({
     sortEdges(s2Edges).forEach((edge) => {
       let [leftEdge, newKey] = edge
 
-      if (s1[0].has(newKey) || s1[1].has(newKey)) {
-        return
-      }
-
-      if (!added.has(leftEdge)) {
-        return
-      }
-
       let right = resultEdges.get(leftEdge)
 
       if (right === newKey) {
