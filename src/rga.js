@@ -24,12 +24,31 @@ module.exports = (id) => ({
     const s2Edges = s2[2]
     const resultEdges = new Map(s1Edges)
 
-    sortEdges(s2Edges).forEach((edge) => {
+    const edgesToAdd = new Map(s2Edges)
+
+    while (edgesToAdd.size > 0) {
+      const startSize = edgesToAdd.size
+      for (const edge of edgesToAdd) {
+        const key = edge[0]
+        if ((edgesToAdd.size === 1) || resultEdges.has(key)) {
+          insertEdge(edge)
+          edgesToAdd.delete(key)
+        }
+      }
+      if (startSize === edgesToAdd.size) {
+        throw new Error('could not reduce size of edges to add')
+      }
+    }
+
+    const newState = [added, removed, resultEdges]
+    return newState
+
+    function insertEdge (edge) {
       let [leftEdge, newKey] = edge
 
       let right = resultEdges.get(leftEdge)
 
-      if (right === newKey) {
+      if (!newKey || right === newKey) {
         return
       }
 
@@ -40,13 +59,8 @@ module.exports = (id) => ({
 
       resultEdges.delete(leftEdge)
       resultEdges.set(leftEdge, newKey)
-      if (newKey && right) {
-        resultEdges.set(newKey, right)
-      }
-    })
-
-    const newState = [added, removed, resultEdges]
-    return newState
+      resultEdges.set(newKey, right)
+    }
   },
 
   value (state) {
@@ -134,22 +148,4 @@ function removeAt (state, pos) {
   }
 
   return remove(state, id)
-}
-
-function sortEdges (_edges) {
-  const edges = new Map(_edges)
-  const hasKey = new Set()
-  const sortedEdges = []
-  const keys = Array.from(edges.keys())
-  while (sortedEdges.length < keys.length) {
-    for (let key of keys) {
-      const value = edges.get(key)
-      edges.delete(key)
-      if (!edges.has(key)) {
-        hasKey.add(key)
-        sortedEdges.push([key, value])
-      }
-    }
-  }
-  return sortedEdges
 }
