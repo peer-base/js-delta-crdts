@@ -117,5 +117,11 @@ describe('rga', () => {
       deltas[0].forEach((delta) => replica2.apply(delta))
       expect(replica2.value()).to.deep.equal(['c', 'b', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
     })
+
+    it('can update at', () => {
+      replica2.apply(replica1.updateAt(1, 'B'))
+      expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
+      expect(replica2.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
+    })
   })
 })
