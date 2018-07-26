@@ -27,6 +27,8 @@ module.exports = (Type) => {
 
     ret.state = () => state
 
+    ret.join = replica.join
+
     return ret
   }
 }

@@ -123,5 +123,18 @@ describe('rga', () => {
       expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
       expect(replica2.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
     })
+
+    it('can join 2 deltas', () => {
+      const deltaBuffer1 = [replica1.push('k'), replica1.push('l')]
+      const deltaBuffer2 = [replica2.push('m'), replica2.push('n')]
+      expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'k', 'l'])
+      expect(replica2.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n'])
+      const deltas1 = replica1.join(deltaBuffer1[0], deltaBuffer1[1])
+      const deltas2 = replica2.join(deltaBuffer2[0], deltaBuffer2[1])
+      replica2.apply(deltas1)
+      replica1.apply(deltas2)
+      expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
+      expect(replica2.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
+    })
   })
 })

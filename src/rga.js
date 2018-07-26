@@ -46,7 +46,7 @@ module.exports = (id) => ({
     },
 
     push (state, value) {
-      const edges = state[2]
+      const [added, removed, edges] = state
       let last = null
       while (edges.has(last) && (edges.get(last) !== undefined)) {
         last = edges.get(last)
@@ -54,7 +54,17 @@ module.exports = (id) => ({
 
       const elemId = cuid()
 
-      return [new Map([[elemId, value]]), new Set([]), new Map([[last, elemId]])]
+      const newAdded = new Map([[elemId, value]])
+      if (added.has(last)) {
+        newAdded.set(last, added.get(last))
+      }
+      const newRemoved = new Set([])
+      if (removed.has(last)) {
+        newRemoved.add(last)
+      }
+      const newEdges = new Map([[null, last], [last, elemId], [elemId, undefined]])
+
+      return [newAdded, newRemoved, newEdges]
     },
 
     remove,
@@ -78,11 +88,19 @@ function join (s1, s2) {
 
   const edgesToAdd = new Map(s2Edges)
 
+  if (!resultEdges.size) {
+    resultEdges.set(null, undefined)
+  }
+
   while (edgesToAdd.size > 0) {
     const startSize = edgesToAdd.size
     for (const edge of edgesToAdd) {
-      const key = edge[0]
-      if ((edgesToAdd.size === 1) || resultEdges.has(key)) {
+      const [key, newValue] = edge
+
+      if (resultEdges.has(newValue)) {
+        // bypass this edge, already inserted
+        edgesToAdd.delete(key)
+      } else if (resultEdges.has(key)) {
         insertEdge(edge)
         edgesToAdd.delete(key)
       }
@@ -116,8 +134,7 @@ function join (s1, s2) {
 }
 
 function insertAt (state, pos, value) {
-  const edges = state[2]
-  const removed = state[1]
+  const [added, removed, edges] = state
   let i = 0
   let left = null
   while (i < pos) {
@@ -132,7 +149,17 @@ function insertAt (state, pos, value) {
   }
 
   const newId = cuid()
-  return [new Map([[newId, value]]), new Set(), new Map([[left, newId]])]
+
+  const newAdded = new Map([[newId, value]])
+  if (added.has(left)) {
+    newAdded.set(left, added.get(left))
+  }
+  const newRemoved = new Set()
+  if (removed.has(left)) {
+    newRemoved.add(left)
+  }
+  const newEdges = new Map([[null, left], [left, newId], [newId, undefined]])
+  return [newAdded, newRemoved, newEdges]
 }
 
 function remove (state, vertex) {
