@@ -104,7 +104,7 @@ describe('rga', () => {
 
     it('values can be inserted concurrently', () => {
       deltas = [[], []]
-      deltas[0].push(replica1.insertAt(3, 'g.1'))
+      deltas[0].push(replica1.insertAllAt(3, ['g.1']))
       deltas[1].push(replica2.insertAt(3, 'g.2'))
     })
 

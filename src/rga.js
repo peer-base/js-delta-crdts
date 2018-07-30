@@ -71,6 +71,7 @@ module.exports = (id) => ({
     removeAt,
 
     insertAt,
+    insertAllAt,
 
     updateAt (state, pos, value) {
       return join(removeAt(state, pos), insertAt(state, pos, value))
@@ -159,6 +160,44 @@ function insertAt (state, pos, value) {
     newRemoved.add(left)
   }
   const newEdges = new Map([[null, left], [left, newId], [newId, undefined]])
+  return [newAdded, newRemoved, newEdges]
+}
+
+function insertAllAt (state, pos, values) {
+  const [added, removed, edges] = state
+  let i = 0
+  let left = null
+  while (i < pos) {
+    if (removed.has(left)) {
+      left = edges.get(left)
+      continue
+    }
+    if (edges.has(left)) {
+      left = edges.get(left)
+    }
+    i++
+  }
+
+  const newAdded = new Map()
+  if (added.has(left)) {
+    newAdded.set(left, added.get(left))
+  }
+  const newRemoved = new Set()
+  if (removed.has(left)) {
+    newRemoved.add(left)
+  }
+
+  const newEdges = new Map()
+  newEdges.set(null, left)
+
+  values.forEach((value) => {
+    const newId = cuid()
+    newAdded.set(newId, value)
+    newEdges.set(left, newId)
+    left = newId
+  })
+  newEdges.set(left, undefined)
+
   return [newAdded, newRemoved, newEdges]
 }
 

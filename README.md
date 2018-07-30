@@ -151,7 +151,7 @@ The following types are built-in:
 
 | Name | Identifier | Mutators | Value Type |
 |------|------------|----------|------------|
-| Replicable Growable Array | `rga` | `.push(element)`, `.insertAt(pos, element)`, `.removeAt(pos)`, `updateAt(pos, element)` | Array |
+| Replicable Growable Array | `rga` | `.push(element)`, `.insertAt(pos, element)`, `.removeAt(pos)`, `updateAt(pos, element)`, `insertAllAt(pos, elements)` | Array |
 
 ## Registers
 
