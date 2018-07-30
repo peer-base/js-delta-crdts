@@ -8,7 +8,7 @@ chai.use(dirtyChai)
 
 const CRDT = require('../')
 
-describe('ggset', () => {
+describe('gset', () => {
   describe('local', () => {
     let GSet
     let gset
@@ -24,7 +24,11 @@ describe('ggset', () => {
       expect(gset.value().size).to.equal(0)
     })
 
-    it('can add element', () => {
+    it('can add element', (done) => {
+      gset.once('change', (change) => {
+        expect(change.add).to.equal('a')
+        done()
+      })
       gset.add('a')
     })
 
@@ -38,9 +42,21 @@ describe('ggset', () => {
 
     let replica1, replica2
     let deltas = [[], []]
+    const expectedChanges = {
+      id1: [{add: 'a'}, {add: 'b'}, {add: 'c'}, {add: 'd'}, {add: 'e'}],
+      id2: [{add: 'a'}, {add: 'd'}, {add: 'e'}, {add: 'b'}, {add: 'c'}]
+    }
     before(() => {
       replica1 = GSet('id1')
       replica2 = GSet('id2')
+
+      replica1.on('change', (change) => {
+        expect(change).to.deep.equal(expectedChanges.id1.shift())
+      })
+
+      replica2.on('change', (change) => {
+        expect(change).to.deep.equal(expectedChanges.id2.shift())
+      })
     })
 
     it('elements can be added', () => {
@@ -65,6 +81,10 @@ describe('ggset', () => {
     })
     it('and the second also converges', () => {
       expect(Array.from(replica2.value()).sort()).to.deep.equal(['a', 'b', 'c', 'd', 'e'])
+    })
+    it('changes were as expected', () => {
+      expect(expectedChanges.id1.length).to.equal(0)
+      expect(expectedChanges.id2.length).to.equal(0)
     })
   })
 })
