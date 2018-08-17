@@ -161,6 +161,52 @@ The following types are built-in:
 | Multi-Value Register | `mvreg` |  `.write(value)`  | Array of concurrent values |
 
 
+## Static methods
+
+Each type has a series of static methods may need to use:
+
+### `Type.initial()`
+
+Returns the initial state for the type. Example:
+
+```js
+const GCounter = CRDT('gcounter')
+const initial = GCounter.initial()
+```
+
+### `Type.value(state)`
+
+Returns the view value of a given state.
+
+
+### `Type.join(s1, s2)`
+
+Joins two states (or deltas) and returns the result.
+
+```js
+const GCounter = CRDT('gcounter')
+
+const state = GCounter.join(delta1, delta)
+
+const value = GCounter.value(state)
+```
+
+
+### Example of using static methods:
+
+```js
+const GCounter = CRDT('gcounter')
+
+deltas = []
+deltas.push(replica1.inc())
+deltas.push(replica1.inc())
+deltas.push(replica1.inc())
+
+const bigDelta = deltas.reduce(GCounter.join, GCounter.initial())
+
+replica2.apply(bigDelta)
+```
+
 # License
 
 MIT

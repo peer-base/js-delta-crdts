@@ -3,7 +3,7 @@
 const EventEmitter = require('events')
 
 module.exports = (Type) => {
-  return (id) => {
+  const type = (id) => {
     const replica = Type(id)
     let state = replica.initial()
     const ret = new EventEmitter()
@@ -33,8 +33,21 @@ module.exports = (Type) => {
 
     ret.join = replica.join
 
+    if (!Type.join) {
+      Type.join = replica.join
+    }
+    if (!Type.initial) {
+      Type.initial = replica.initial
+    }
+
     return ret
   }
+
+  const proto = prototypeFor(Type)
+
+  Object.setPrototypeOf(type, proto)
+
+  return type
 }
 
 class ChangeEmitter {
@@ -53,5 +66,14 @@ class ChangeEmitter {
     events.forEach((event) => {
       this._client.emit('change', event)
     })
+  }
+}
+
+function prototypeFor (Type) {
+  const instance = Type()
+  return {
+    initial: instance.initial,
+    join: instance.join,
+    value: instance.value
   }
 }
