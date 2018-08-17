@@ -12,6 +12,7 @@
 Delta state-based CRDTs in Javascript.
 
 * ([See original paper](https://arxiv.org/abs/1603.01529))
+* [Demo video](https://www.youtube.com/watch?v=Cn9pIX8BWIU)
 
 ## Install
 
