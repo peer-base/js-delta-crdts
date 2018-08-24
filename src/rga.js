@@ -135,32 +135,7 @@ function join (s1, s2) {
 }
 
 function insertAt (state, pos, value) {
-  const [added, removed, edges] = state
-  let i = 0
-  let left = null
-  while (i < pos) {
-    if (removed.has(left)) {
-      left = edges.get(left)
-      continue
-    }
-    if (edges.has(left)) {
-      left = edges.get(left)
-    }
-    i++
-  }
-
-  const newId = cuid()
-
-  const newAdded = new Map([[newId, value]])
-  if (added.has(left)) {
-    newAdded.set(left, added.get(left))
-  }
-  const newRemoved = new Set()
-  if (removed.has(left)) {
-    newRemoved.add(left)
-  }
-  const newEdges = new Map([[null, left], [left, newId], [newId, undefined]])
-  return [newAdded, newRemoved, newEdges]
+  return insertAllAt(state, pos, [value])
 }
 
 function insertAllAt (state, pos, values) {
