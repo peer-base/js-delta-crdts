@@ -142,9 +142,6 @@ function insertAllAt (state, pos, values) {
   const [added, removed, edges] = state
   let i = 0
   let left = null
-  console.log('Added', added)
-  console.log('Removed', removed)
-  console.log('Edges', edges)
   while (i < pos) {
     if (removed.has(left)) {
       left = edges.get(left)
