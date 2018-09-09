@@ -39,6 +39,15 @@ describe('rga', () => {
     it('and the value is inserted', () => {
       expect(rga.value()).to.deep.equal(['a', 'b'])
     })
+
+    it('can insert at correct spot after deleted sequence', () => {
+      rga.push('c')
+      rga.push('d')
+      rga.removeAt(1)
+      rga.removeAt(1)
+      rga.insertAt(2, 'e')
+      expect(rga.value()).to.deep.equal(['a', 'd', 'e'])
+    })
   })
 
   describe('together', () => {
