@@ -150,6 +150,9 @@ function insertAllAt (state, pos, values) {
     if (edges.has(left)) {
       left = edges.get(left)
     }
+    while (removed.has(left)) {
+      left = edges.get(left)
+    }
     i++
   }
 
