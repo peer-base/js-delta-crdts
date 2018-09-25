@@ -48,7 +48,7 @@ module.exports = (id) => ({
     push (state, value) {
       const [added, removed, edges] = state
       let last = null
-      while (edges.has(last) && (edges.get(last) !== undefined)) {
+      while (edges.has(last) && edges.get(last)) {
         last = edges.get(last)
       }
 
