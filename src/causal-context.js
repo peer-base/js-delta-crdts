@@ -2,7 +2,7 @@
 
 const CustomSet = require('./custom-set')
 
-module.exports = class DotContext {
+module.exports = class CausalContext {
   constructor (cc) {
     this.cc = new Map(cc) // compact causal context
     this.dc = new CustomSet() // dot cloud
@@ -28,11 +28,16 @@ module.exports = class DotContext {
     }
   }
 
-  makeDot (id) {
+  next (id) {
     const value = this.cc.get(id) || 0
     const newValue = value + 1
-    this.cc.set(id, newValue)
     return [id, newValue]
+  }
+
+  makeDot (id) {
+    const n = this.next(id)
+    this.cc.set(n[0], n[1])
+    return n
   }
 
   insertDot (key, value, compactNow) {
@@ -43,8 +48,8 @@ module.exports = class DotContext {
   }
 
   join (other) {
-    if (!(other instanceof DotContext)) {
-      const newOther = new DotContext(other.cc)
+    if (!(other instanceof CausalContext)) {
+      const newOther = new CausalContext(other.cc)
       newOther.dc = new CustomSet()
       if (other.dc._refs) {
         other.dc._refs = newOther.dc._refs
@@ -63,6 +68,6 @@ module.exports = class DotContext {
       result.set(key, Math.max(this.cc.get(key) || 0, other.cc.get(key) || 0))
     }
 
-    return new DotContext(result)
+    return new CausalContext(result)
   }
 }

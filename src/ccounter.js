@@ -1,10 +1,10 @@
 'use strict'
 
-const DotKernel = require('./dot-kernel')
+const DotSet = require('./dot-set')
 
 module.exports = (id) => {
   return {
-    initial () { return new DotKernel() },
+    initial () { return new DotSet() },
     join (s1, s2) { return s1.join(s2) },
     value (s) {
       let acc = 0
@@ -26,11 +26,11 @@ module.exports = (id) => {
   }
 
   function mutateFor (s) {
-    let r = new DotKernel()
+    let r = new DotSet()
     let base = 0
     for (let it of s.ds) {
       const [key, value] = it
-      const dot = DotKernel.dotForKey(key)
+      const dot = DotSet.dotForKey(key)
       const dotId = dot[0]
       if (id === dotId) {
         base = Math.max(base, value)
