@@ -34,7 +34,7 @@ module.exports = class DotMap {
 
     const newCausalContext = this.cc.join(other.cc)
     const newMap = new Map()
-    const result = new DotMap(newCausalContext, newMap)
+    const result = new DotMap(newCausalContext, allKeys, newMap)
 
     for (let commonKey of interceptingKeys) {
       const sub1 = this.state.get(commonKey)
