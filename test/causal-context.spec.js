@@ -8,7 +8,7 @@ chai.use(dirtyChai)
 
 const CausalContext = require('../src/causal-context')
 
-describe('cansal-context', () => {
+describe('causal-context', () => {
   let cc
 
   it('can create', () => {

@@ -108,7 +108,9 @@ class DotSet {
     }
 
     const cc = this.cc.join(other.cc)
-    return new DotSet(ds, cc)
+    const result = new DotSet(ds, cc)
+    result.type = this.type
+    return result
   }
 }
 
