@@ -60,7 +60,7 @@ class DotSet {
     const value = this.ds.get(key)
     const res = new DotSet()
     if (value) {
-      res.cc.insertDot(dot)
+      res.cc.insertDot(dot[0], dot[1])
       this.ds.delete(key)
     }
     res.cc.compact()

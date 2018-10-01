@@ -38,7 +38,7 @@ module.exports = {
     },
     remove (id, s, key) {
       const dotStore = s.state.get(key)
-      const dots = (dotStore && dotStore.dots()) || new Set()
+      const dots = new Map((dotStore && dotStore.dots()) || new Set())
 
       const newCC = new CausalContext(dots)
       const newKeys = new Set([key])

@@ -40,15 +40,19 @@ module.exports = class DotMap {
       const sub1 = this.state.get(commonKey)
       const sub2 = other.state.get(commonKey)
 
-      sub1.cc = this.cc
-      sub2.cc = other.cc
+      let newSub
 
-      const newSub = sub1.join(sub2)
-      newSub.cc = null
+      if (!this.state.has(commonKey) || !other.state.has(commonKey)) {
+        newSub = this.state.has(commonKey) ? sub1 : sub2
+      } else {
+        sub1.cc = this.cc
+        sub2.cc = other.cc
 
-      if (newSub) {
-        result.state.set(commonKey, newSub)
+        newSub = sub1.join(sub2)
       }
+
+      newSub.cc = null
+      result.state.set(commonKey, newSub)
     }
 
     for (let key of allKeys) {

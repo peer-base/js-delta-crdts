@@ -9,7 +9,7 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('ormap', () => {
-  describe('local', () => {
+  describe.only('local', () => {
     let ORMap
     let ormap
     it('type can be created', () => {
@@ -38,6 +38,14 @@ describe('ormap', () => {
 
     it('can get value', () => {
       expect(ormap.value()).to.deep.equal({a: 3})
+    })
+
+    it('can remove', () => {
+      ormap.remove('a')
+    })
+
+    it.skip('can get value', () => {
+      expect(ormap.value()).to.deep.equal({})
     })
   })
 
@@ -78,6 +86,14 @@ describe('ormap', () => {
         a: new Set(['a', 'A']),
         b: new Set(['b', 'B']),
         c: new Set(['c', 'C'])})
+    })
+
+    it('keeps causality', () => {
+      const delta = replica1.applySub('a', 'mvreg', 'write', 'AA')
+      expect(replica1.value().a).to.deep.equal(new Set(['AA']))
+
+      replica2.apply(delta)
+      expect(replica2.value().a).to.deep.equal(new Set(['AA']))
     })
   })
 })
