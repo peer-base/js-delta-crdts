@@ -105,11 +105,17 @@ You can extend the types, creating your own CRDT.
 Example:
 
 ```js
-const Zero = (id) => ({
+const Zero = {
   initial: () => 0,
   join: (s1, s2) => 0,
-  value: (state) => state
-})
+  value: (state) => state,
+  mutators: {
+    doSomething (id, state, arg1) => {
+      // example mutator, returning a delta
+      return 0
+    }
+  }
+}
 
 CRDT.define('zero', Zero)
 

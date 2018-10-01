@@ -9,6 +9,10 @@ class DotSet {
     this.cc = cc || new CausalContext()
   }
 
+  dots () {
+    return new Set(Array.from(this.ds.keys()).map(DotSet.dotForKey))
+  }
+
   static keyForDot (dot) {
     return JSON.stringify(dot)
   }

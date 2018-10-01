@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = (id) => ({
+module.exports = {
   initial () { return new Set() },
   join (s1, s2) {
     const targetSet = new Set([...s1])
@@ -14,8 +14,8 @@ module.exports = (id) => ({
   },
   value (s) { return s },
   mutators: {
-    add (s, value) {
+    add (id, s, value) {
       return new Set([value])
     }
   }
-})
+}

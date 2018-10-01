@@ -26,6 +26,7 @@ module.exports = class CausalContext {
       }
       this.dc.delete(dot)
     }
+    return this
   }
 
   next (id) {

@@ -10,7 +10,7 @@
 
 const cuid = require('cuid')
 
-module.exports = (id) => ({
+module.exports = {
   initial: () => [
     new Map([[null, null]]), // VA
     new Set(), // VR
@@ -33,7 +33,7 @@ module.exports = (id) => ({
   },
 
   mutators: {
-    addRight (s, beforeVertex, value) {
+    addRight (id, s, beforeVertex, value) {
       const elemId = cuid()
       const edges = s[2]
       let l = beforeVertex
@@ -45,7 +45,7 @@ module.exports = (id) => ({
       return [new Map([[elemId, value]]), new Set([]), newEdges]
     },
 
-    push (state, value) {
+    push (id, state, value) {
       const [added, removed, edges] = state
       let last = null
       while (edges.has(last) && edges.get(last)) {
@@ -73,11 +73,11 @@ module.exports = (id) => ({
     insertAt,
     insertAllAt,
 
-    updateAt (state, pos, value) {
-      return join(removeAt(state, pos), insertAt(state, pos, value))
+    updateAt (id, state, pos, value) {
+      return join(removeAt(id, state, pos), insertAt(id, state, pos, value))
     }
   }
-})
+}
 
 function join (s1, s2) {
   const added = new Map([...s1[0], ...s2[0]])
@@ -134,11 +134,11 @@ function join (s1, s2) {
   }
 }
 
-function insertAt (state, pos, value) {
-  return insertAllAt(state, pos, [value])
+function insertAt (id, state, pos, value) {
+  return insertAllAt(id, state, pos, [value])
 }
 
-function insertAllAt (state, pos, values) {
+function insertAllAt (id, state, pos, values) {
   const [added, removed, edges] = state
   let i = 0
   let left = null
@@ -179,25 +179,25 @@ function insertAllAt (state, pos, values) {
   return [newAdded, newRemoved, newEdges]
 }
 
-function remove (state, vertex) {
+function remove (id, state, vertex) {
   return [new Map(), new Set([vertex]), new Map()]
 }
 
-function removeAt (state, pos) {
+function removeAt (id, state, pos) {
   const removed = state[1]
   const edges = state[2]
   let i = -1
-  let id = null
+  let elementId = null
   while (i < pos) {
-    if (edges.has(id)) {
-      id = edges.get(id)
+    if (edges.has(elementId)) {
+      elementId = edges.get(elementId)
     } else {
       throw new Error('nothing at pos ' + pos)
     }
-    if (!removed.has(id)) {
+    if (!removed.has(elementId)) {
       i++
     }
   }
 
-  return remove(state, id)
+  return remove(id, state, elementId)
 }

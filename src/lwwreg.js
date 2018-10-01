@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = (id) => ({
+module.exports = {
   initial () { return [0, undefined] },
   join (s1, s2) {
     const t1 = s1[0]
@@ -12,8 +12,8 @@ module.exports = (id) => ({
   },
   value (s) { return s[1] },
   mutators: {
-    write (s, ts, value) {
+    write (id, s, ts, value) {
       return [ts, value]
     }
   }
-})
+}
