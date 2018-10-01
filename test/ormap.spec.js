@@ -9,7 +9,7 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 
 describe('ormap', () => {
-  describe.only('local', () => {
+  describe('local', () => {
     let ORMap
     let ormap
     it('type can be created', () => {
