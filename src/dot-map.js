@@ -24,45 +24,34 @@ module.exports = class DotMap {
       allKeys.add(key)
     }
 
-    const interceptingKeys = new Set()
-
-    for (let key of allKeys) {
-      if (this.keys.has(key) && other.keys.has(key)) {
-        interceptingKeys.add(key)
-      }
-    }
-
     const newCausalContext = this.cc.join(other.cc)
     const newMap = new Map()
     const result = new DotMap(newCausalContext, allKeys, newMap)
-
-    for (let commonKey of interceptingKeys) {
-      const sub1 = this.state.get(commonKey)
-      const sub2 = other.state.get(commonKey)
-
-      let newSub
-
-      if (!this.state.has(commonKey) || !other.state.has(commonKey)) {
-        newSub = this.state.has(commonKey) ? sub1 : sub2
-      } else {
-        sub1.cc = this.cc
-        sub2.cc = other.cc
-
-        newSub = sub1.join(sub2)
-      }
-
-      newSub.cc = null
-      result.state.set(commonKey, newSub)
-    }
+    result.type = this.type
 
     for (let key of allKeys) {
-      if (!interceptingKeys.has(key)) {
-        const value = this.state.has(key) ? this.state.get(key) : other.state.get(key)
-        result.state.set(key, value)
+      let remove = false
+
+      const comparison = this.cc.compare(other.cc)
+      if (other.keys.has(key) && !other.state.has(key) && comparison >= 0) {
+        remove = true
+      } else if (this.keys.has(key) && !this.state.has(key) && comparison < 0) {
+        remove = true
+      }
+
+      const sub1 = this.state.has(key) && this.state.get(key)
+      const sub2 = other.state.has(key) && other.state.get(key)
+      let newSub
+
+      if (!remove && (sub1 || sub2)) {
+        if (sub1 && sub2) {
+          newSub = sub1.join(sub2)
+        } else {
+          newSub = sub1 || sub2
+        }
+        result.state.set(key, newSub)
       }
     }
-
-    result.type = this.type
 
     return result
   }

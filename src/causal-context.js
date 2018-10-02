@@ -14,6 +14,26 @@ module.exports = class CausalContext {
     return (value <= count || this.dc.has(dot))
   }
 
+  compare (cc) {
+    const keys = new Set(this.cc.keys())
+    for (let key of cc.cc.keys()) {
+      keys.add(key)
+    }
+
+    for (let key of keys) {
+      const myValue = this.cc.get(key) || 0
+      const otherValue = cc.cc.get(key) || 0
+      const diff = myValue - otherValue
+      if (diff < 0) {
+        return -1
+      } else if (diff > 0) {
+        return 1
+      }
+    }
+
+    return 0
+  }
+
   compact () {
     // compact DC to CC if possible
     for (let dot of this.dc.values()) {

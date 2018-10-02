@@ -44,7 +44,23 @@ describe('ormap', () => {
       ormap.remove('a')
     })
 
-    it.skip('can get value', () => {
+    it('can get value', () => {
+      expect(ormap.value()).to.deep.equal({})
+    })
+
+    it('supports embedding a non-causal CRDT', () => {
+      ormap.applySub('b', 'gset', 'add', 'B')
+    })
+
+    it('can get value', () => {
+      expect(ormap.value()).to.deep.equal({b: new Set(['B'])})
+    })
+
+    it('can remove that value again', () => {
+      ormap.remove('b')
+    })
+
+    it('can get value', () => {
       expect(ormap.value()).to.deep.equal({})
     })
   })
