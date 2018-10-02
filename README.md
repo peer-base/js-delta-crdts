@@ -167,6 +167,22 @@ The following types are built-in:
 | Last-Write-Wins Register | `lwwreg` |  `.write(value)`  | Value |
 | Multi-Value Register | `mvreg` |  `.write(value)`  | Array of concurrent values |
 
+## Maps
+
+| Name | Identifier | Mutators | Value Type |
+|------|------------|----------|------------|
+| Observed-Remove Map | `ormap` |  `.remove(key)`, `applySub(key, crdt_name, mutator_name, ...args)`  | Object |
+
+
+OR-Maps support embedding of other CRDTs. Example:
+
+```js
+const ORMap = CRDT('ormap')
+const m = ormap('id1')
+const delta = m.applySub('a', 'mvreg', 'write', 'A'))
+console.log(ormap.value()) // => {a: new Set(['A'])}
+```
+
 
 ## Static methods
 
