@@ -174,7 +174,7 @@ The following types are built-in:
 | Observed-Remove Map | `ormap` |  `.remove(key)`, `applySub(key, crdt_name, mutator_name, ...args)`  | Object |
 
 
-OR-Maps support embedding of other CRDTs. Example:
+OR-Maps support embedding of other causal CRDTs. Example:
 
 ```js
 const ORMap = CRDT('ormap')
@@ -182,6 +182,16 @@ const m = ormap('id1')
 const delta = m.applySub('a', 'mvreg', 'write', 'A'))
 console.log(ormap.value()) // => {a: new Set(['A'])}
 ```
+
+Of this collection, causal CRDTs are:
+
+* AWORSet
+* CCounter
+* DWFlag
+* EWFlag
+* MVReg
+* ORMap
+* RWORSet
 
 
 ## Static methods

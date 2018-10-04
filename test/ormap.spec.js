@@ -55,14 +55,6 @@ describe('ormap', () => {
     it('can get value', () => {
       expect(ormap.value()).to.deep.equal({b: new Set(['B'])})
     })
-
-    it('can remove that value again', () => {
-      ormap.remove('b')
-    })
-
-    it('can get value', () => {
-      expect(ormap.value()).to.deep.equal({})
-    })
   })
 
   describe('together', () => {
@@ -110,6 +102,17 @@ describe('ormap', () => {
 
       replica2.apply(delta)
       expect(replica2.value().a).to.deep.equal(new Set(['AA']))
+    })
+
+    it('add wins', () => {
+      const delta1 = replica1.remove('b')
+      expect(replica1.value().b).to.not.exist()
+      const delta2 = replica2.applySub('b', 'mvreg', 'write', 'BB')
+      expect(replica2.value().b).to.deep.equal(new Set(['BB']))
+      replica1.apply(delta2)
+      replica2.apply(delta1)
+      expect(replica2.value().b).to.deep.equal(new Set(['BB']))
+      expect(replica1.value().b).to.deep.equal(new Set(['BB']))
     })
   })
 })

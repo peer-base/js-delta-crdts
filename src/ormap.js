@@ -33,16 +33,22 @@ module.exports = {
       state.cc = s.cc
       const delta = mutator.call(this, id, state, ...args)
       delta.type = typeName
-      const newKeys = new Set([key])
-      return new DotMap(delta.cc, newKeys, new Map([[key, delta]]))
+      return new DotMap(delta.cc, new Map([[key, delta]]))
     },
     remove (id, s, key) {
       const dotStore = s.state.get(key)
-      const dots = new Map((dotStore && dotStore.dots && dotStore.dots()) || new Set())
 
+      const dots = new Map((dotStore && dotStore.dots && dotStore.dots()) || new Set())
       const newCC = new CausalContext(dots)
-      const newKeys = new Set([key])
-      return new DotMap(newCC, newKeys)
+
+      const CRDT = require('./')
+      const type = CRDT.type(dotStore.type)
+      if (!type) {
+        throw new Error('unknown type name')
+      }
+      const newSubState = type.initial()
+
+      return new DotMap(newCC, new Map([[key, newSubState]]))
     }
   }
 }
