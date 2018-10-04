@@ -42,6 +42,9 @@ module.exports = class CausalContext {
   }
 
   insertDot (key, value, compactNow) {
+    if (value === undefined) {
+      value = null
+    }
     this.dc.add([key, value])
     if (compactNow) {
       this.compact()

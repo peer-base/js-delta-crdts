@@ -88,7 +88,6 @@ class DotSet {
       other = dotSetFromRaw(other)
     }
 
-    console.log('OTHER:', other)
     const keys = new Set(this.ds.keys())
     for (let key of other.ds.keys()) { keys.add(key) }
 
@@ -134,11 +133,8 @@ function dotSetFromRaw (base) {
     cc.dc = dc
   }
   let ds = base.ds
-  // console.log('DS:', ds)
-  // if (ds && !(ds instanceof Map)) {
-  //   ds = new Map(Object.entries(ds))
-  // }
 
   const dotSet = new DotSet(ds, cc)
+  dotSet.type = base.type
   return dotSet
 }

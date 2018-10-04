@@ -92,6 +92,6 @@ function dotMapFromRaw (base) {
     cc.dc = dc
   }
   const dotMap = new DotMap(cc, base.state)
-  console.log('DOTMAP:', dotMap)
+  dotMap.type = base.type
   return dotMap
 }
