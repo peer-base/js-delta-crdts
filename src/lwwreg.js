@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  initial () { return [0, undefined] },
+  initial () { return [0, null] },
   join (s1, s2) {
     const t1 = s1[0]
     const t2 = s2[0]

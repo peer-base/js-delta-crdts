@@ -1,9 +1,10 @@
 'use strict'
 
 const CausalContext = require('./causal-context')
+const CustomSet = require('./custom-set')
 const flatMap = require('array.prototype.flatmap')
 
-module.exports = class DotMap {
+class DotMap {
   constructor (cc, state) {
     this.cc = cc || new CausalContext()
     this.state = state || new Map()
@@ -22,6 +23,10 @@ module.exports = class DotMap {
   }
 
   join (other) {
+    if (!(other instanceof DotMap)) {
+      other = dotMapFromRaw(other)
+    }
+
     const allKeys = new Set(this.state.keys())
     for (let key of other.state.keys()) {
       allKeys.add(key)
@@ -65,6 +70,8 @@ module.exports = class DotMap {
   }
 }
 
+module.exports = DotMap
+
 function join (s1, s2) {
   if (typeof s1 === 'function') {
     return s1.join(s2)
@@ -73,4 +80,18 @@ function join (s1, s2) {
     const type = CRDT.type(s1.type || s2.type)
     return type.join(s1, s2)
   }
+}
+
+function dotMapFromRaw (base) {
+  const cc = new CausalContext(base.cc && base.cc.cc)
+  if (base.cc && base.cc.dc) {
+    const dc = new CustomSet()
+    if (base.cc.dc._refs) {
+      dc._refs = base.cc.dc._refs
+    }
+    cc.dc = dc
+  }
+  const dotMap = new DotMap(cc, base.state)
+  dotMap.type = base.type
+  return dotMap
 }

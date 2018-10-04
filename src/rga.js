@@ -14,7 +14,7 @@ module.exports = {
   initial: () => [
     new Map([[null, null]]), // VA
     new Set(), // VR
-    new Map([[null, undefined]])], // E
+    new Map([[null, null]])], // E
 
   join,
 
@@ -62,7 +62,7 @@ module.exports = {
       if (removed.has(last)) {
         newRemoved.add(last)
       }
-      const newEdges = new Map([[null, last], [last, elemId], [elemId, undefined]])
+      const newEdges = new Map([[null, last], [last, elemId], [elemId, null]])
 
       return [newAdded, newRemoved, newEdges]
     },
@@ -90,7 +90,7 @@ function join (s1, s2) {
   const edgesToAdd = new Map(s2Edges)
 
   if (!resultEdges.size) {
-    resultEdges.set(null, undefined)
+    resultEdges.set(null, null)
   }
 
   while (edgesToAdd.size > 0) {
@@ -174,7 +174,7 @@ function insertAllAt (id, state, pos, values) {
     newEdges.set(left, newId)
     left = newId
   })
-  newEdges.set(left, undefined)
+  newEdges.set(left, null)
 
   return [newAdded, newRemoved, newEdges]
 }

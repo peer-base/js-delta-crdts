@@ -7,6 +7,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const CRDT = require('../')
+const transmit = require('./transmit')
 
 describe('ormap', () => {
   describe('local', () => {
@@ -81,7 +82,7 @@ describe('ormap', () => {
     })
 
     it('the first converges', () => {
-      deltas[1].forEach((delta) => replica1.apply(delta))
+      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
       expect(replica1.value()).to.deep.equal({
         a: new Set(['a', 'A']),
         b: new Set(['b', 'B']),
@@ -89,7 +90,7 @@ describe('ormap', () => {
     })
 
     it('the second converges', () => {
-      deltas[0].forEach((delta) => replica2.apply(delta))
+      deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
       expect(replica2.value()).to.deep.equal({
         a: new Set(['a', 'A']),
         b: new Set(['b', 'B']),
@@ -109,8 +110,8 @@ describe('ormap', () => {
       expect(replica1.value().b).to.not.exist()
       const delta2 = replica2.applySub('b', 'mvreg', 'write', 'BB')
       expect(replica2.value().b).to.deep.equal(new Set(['BB']))
-      replica1.apply(delta2)
-      replica2.apply(delta1)
+      replica1.apply(transmit(delta2))
+      replica2.apply(transmit(delta1))
       expect(replica2.value().b).to.deep.equal(new Set(['BB']))
       expect(replica1.value().b).to.deep.equal(new Set(['BB']))
     })
