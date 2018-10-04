@@ -7,6 +7,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const CRDT = require('../')
+const transmit = require('./transmit')
 
 describe('lwwreg', () => {
   describe('local', () => {
@@ -57,11 +58,11 @@ describe('lwwreg', () => {
     })
 
     it('changes from one can be joined to the other', () => {
-      deltas[0].forEach((delta) => replica2.apply(delta))
+      deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
     })
 
     it('and vice versa', () => {
-      deltas[1].forEach((delta) => replica1.apply(delta))
+      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
     })
 
     it('the first converges', () => {

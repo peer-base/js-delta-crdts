@@ -7,6 +7,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const CRDT = require('../')
+const transmit = require('./transmit')
 
 describe('rga', () => {
   describe('local', () => {
@@ -68,12 +69,12 @@ describe('rga', () => {
     })
 
     it('the first converges', () => {
-      deltas[1].forEach((delta) => replica1.apply(delta))
+      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
       expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
     })
 
     it('and the second also converges', () => {
-      deltas[0].forEach((delta) => replica2.apply(delta))
+      deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
       expect(replica2.value()).to.deep.equal(['c', 'd', 'a', 'b'])
     })
 
@@ -84,12 +85,12 @@ describe('rga', () => {
     })
 
     it('the first converges', () => {
-      deltas[1].forEach((delta) => replica1.apply(delta))
+      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
       expect(replica1.value()).to.deep.equal(['c', 'b'])
     })
 
     it('and the second also converges', () => {
-      deltas[0].forEach((delta) => replica2.apply(delta))
+      deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
       expect(replica2.value()).to.deep.equal(['c', 'b'])
     })
 
@@ -102,12 +103,12 @@ describe('rga', () => {
     })
 
     it('the first converges', () => {
-      deltas[1].forEach((delta) => replica1.apply(delta))
+      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
       expect(replica1.value()).to.deep.equal(['c', 'b', 'g', 'h', 'e', 'f'])
     })
 
     it('and the second also converges', () => {
-      deltas[0].forEach((delta) => replica2.apply(delta))
+      deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
       expect(replica2.value()).to.deep.equal(['c', 'b', 'g', 'h', 'e', 'f'])
     })
 
@@ -118,12 +119,12 @@ describe('rga', () => {
     })
 
     it('the first converges', () => {
-      deltas[1].forEach((delta) => replica1.apply(delta))
+      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
       expect(replica1.value()).to.deep.equal(['c', 'b', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
     })
 
     it('and the second also converges', () => {
-      deltas[0].forEach((delta) => replica2.apply(delta))
+      deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
       expect(replica2.value()).to.deep.equal(['c', 'b', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
     })
 
@@ -140,8 +141,8 @@ describe('rga', () => {
       expect(replica2.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n'])
       const deltas1 = replica1.join(deltaBuffer1[0], deltaBuffer1[1])
       const deltas2 = replica2.join(deltaBuffer2[0], deltaBuffer2[1])
-      replica2.apply(deltas1)
-      replica1.apply(deltas2)
+      replica2.apply(transmit(deltas1))
+      replica1.apply(transmit(deltas2))
       expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
       expect(replica2.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
     })
