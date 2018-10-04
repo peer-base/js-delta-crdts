@@ -1,9 +1,9 @@
 'use strict'
 
-const DotKernel = require('./dot-kernel')
+const DotSet = require('./dot-set')
 
-module.exports = (id) => ({
-  initial () { return new DotKernel() },
+module.exports = {
+  initial () { return new DotSet() },
   join (s1, s2) { return s1.join(s2) },
   value (s) {
     const keeps = new Map()
@@ -20,17 +20,17 @@ module.exports = (id) => ({
     return ret
   },
   mutators: {
-    add (s, value) {
+    add (id, s, value) {
       return s.join(
         s.removeValue([value, true]),
         s.removeValue([value, false]),
         s.add(id, [value, true]))
     },
-    remove (s, value) {
+    remove (id, s, value) {
       return s.join(
         s.removeValue([value, true]),
         s.removeValue([value, false]),
         s.add(id, [value, false]))
     }
   }
-})
+}

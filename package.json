@@ -17,6 +17,7 @@
     "standard": "^11.0.1"
   },
   "dependencies": {
+    "array.prototype.flatmap": "^1.2.1",
     "cuid": "^2.1.1"
   },
   "pre-commit": [

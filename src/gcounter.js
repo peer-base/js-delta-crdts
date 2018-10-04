@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = (id) => ({
+module.exports = {
   initial () { return new Map() },
 
   value (s) {
@@ -21,10 +21,10 @@ module.exports = (id) => ({
   },
 
   mutators: {
-    inc (s) {
+    inc (id, s) {
       const ret = new Map()
       ret.set(id, (s.get(id) || 0) + 1)
       return ret
     }
   }
-})
+}

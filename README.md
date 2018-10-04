@@ -105,11 +105,17 @@ You can extend the types, creating your own CRDT.
 Example:
 
 ```js
-const Zero = (id) => ({
+const Zero = {
   initial: () => 0,
   join: (s1, s2) => 0,
-  value: (state) => state
-})
+  value: (state) => state,
+  mutators: {
+    doSomething (id, state, arg1) => {
+      // example mutator, returning a delta
+      return 0
+    }
+  }
+}
 
 CRDT.define('zero', Zero)
 
@@ -160,6 +166,34 @@ The following types are built-in:
 |------|------------|----------|------------|
 | Last-Write-Wins Register | `lwwreg` |  `.write(value)`  | Value |
 | Multi-Value Register | `mvreg` |  `.write(value)`  | Array of concurrent values |
+
+## Maps
+
+| Name | Identifier | Mutators | Value Type |
+|------|------------|----------|------------|
+| Observed-Remove Map | `ormap` |  `.remove(key)`, `applySub(key, crdt_name, mutator_name, ...args)`  | Object |
+
+
+### Embedding CRDTs in ORMaps
+
+OR-Maps support embedding of other causal CRDTs. Example:
+
+```js
+const ORMap = CRDT('ormap')
+const m = ormap('id1')
+const delta = m.applySub('a', 'mvreg', 'write', 'A'))
+console.log(ormap.value()) // => {a: new Set(['A'])}
+```
+
+Of this collection, causal CRDTs are:
+
+* AWORSet
+* CCounter
+* DWFlag
+* EWFlag
+* MVReg
+* ORMap
+* RWORSet
 
 
 ## Static methods

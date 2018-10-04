@@ -1,11 +1,11 @@
 /* eslint-env mocha */
 'use strict'
 
-const ZERO = (id) => ({
+const ZERO = {
   initial: () => 0,
   join: (s1, s2) => 0,
   value: (state) => state
-})
+}
 
 const chai = require('chai')
 const dirtyChai = require('dirty-chai')

@@ -1,9 +1,9 @@
 'use strict'
 
-const DotKernel = require('./dot-kernel')
+const DotSet = require('./dot-set')
 
-module.exports = (id) => ({
-  initial () { return new DotKernel() },
+module.exports = {
+  initial () { return new DotSet() },
   join (s1, s2) { return s1.join(s2) },
   value (s) {
     const ret = new Set()
@@ -13,10 +13,10 @@ module.exports = (id) => ({
     return ret
   },
   mutators: {
-    write (s, value) {
+    write (id, s, value) {
       return s.join(
         s.removeAll(),
         s.add(id, value))
     }
   }
-})
+}

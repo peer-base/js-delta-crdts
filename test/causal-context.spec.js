@@ -6,55 +6,55 @@ const dirtyChai = require('dirty-chai')
 const expect = chai.expect
 chai.use(dirtyChai)
 
-const DotContext = require('../src/dot-context')
+const CausalContext = require('../src/causal-context')
 
-describe('dot-context', () => {
-  let dc
+describe('causal-context', () => {
+  let cc
 
   it('can create', () => {
-    dc = new DotContext()
+    cc = new CausalContext()
   })
 
   it('dot is not in', () => {
-    expect(dc.dotIn(['a', 1])).to.be.false()
+    expect(cc.dotIn(['a', 1])).to.be.false()
   })
 
   it('can make dot', () => {
-    dc.makeDot('a')
+    cc.makeDot('a')
   })
 
   it('dot is in', () => {
-    expect(dc.dotIn(['a', 1])).to.be.true()
+    expect(cc.dotIn(['a', 1])).to.be.true()
   })
 
   it('higher dot is not in', () => {
-    expect(dc.dotIn(['a', 2])).to.be.false()
+    expect(cc.dotIn(['a', 2])).to.be.false()
   })
 
   it('can insert higher dot', () => {
-    dc.insertDot('a', 2)
+    cc.insertDot('a', 2)
   })
 
   it('dot is in', () => {
-    expect(dc.dotIn(['a', 1])).to.be.true()
+    expect(cc.dotIn(['a', 1])).to.be.true()
   })
 
   it('current dot is in', () => {
-    expect(dc.dotIn(['a', 2])).to.be.true()
+    expect(cc.dotIn(['a', 2])).to.be.true()
   })
 
   it('higher dot is not in', () => {
-    expect(dc.dotIn(['a', 3])).to.be.false()
+    expect(cc.dotIn(['a', 3])).to.be.false()
   })
 
   it('can compact', () => {
-    dc.compact()
+    cc.compact()
   })
 
   it('keeps properties after compaction', () => {
-    expect(dc.dotIn(['a', 1])).to.be.true()
-    expect(dc.dotIn(['a', 2])).to.be.true()
-    expect(dc.dotIn(['a', 3])).to.be.false()
+    expect(cc.dotIn(['a', 1])).to.be.true()
+    expect(cc.dotIn(['a', 2])).to.be.true()
+    expect(cc.dotIn(['a', 3])).to.be.false()
   })
 
   describe('join', () => {
@@ -62,13 +62,13 @@ describe('dot-context', () => {
     let result
 
     before(() => {
-      other = new DotContext()
+      other = new CausalContext()
       other.insertDot('a', 1)
       other.insertDot('b', 2)
     })
 
     it('can join', () => {
-      result = dc.join(other)
+      result = cc.join(other)
     })
 
     it('joined correctly', () => {

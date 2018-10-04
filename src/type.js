@@ -3,27 +3,25 @@
 const EventEmitter = require('events')
 
 module.exports = (Type) => {
-  const type = (id) => {
-    const replica = Type(id)
-    let state = replica.initial()
+  return (id) => {
+    let state = Type.initial()
     const ret = new EventEmitter()
-
     const emitter = new ChangeEmitter(ret)
 
-    Object.keys(replica.mutators || {}).forEach((mutatorName) => {
-      const mutator = replica.mutators[mutatorName]
+    Object.keys(Type.mutators || {}).forEach((mutatorName) => {
+      const mutator = Type.mutators[mutatorName]
       ret[mutatorName] = (...args) => {
-        const delta = mutator(state, ...args)
-        state = replica.join.call(emitter, state, delta)
+        const delta = mutator(id, state, ...args)
+        state = Type.join.call(emitter, state, delta)
         emitter.emitAll()
         return delta
       }
     })
 
-    ret.value = () => replica.value(state)
+    ret.value = () => Type.value(state)
 
     ret.apply = (delta) => {
-      state = replica.join.call(emitter, state, delta)
+      state = Type.join.call(emitter, state, delta)
       emitter.emitAll()
       ret.emit('state changed', state)
       return state
@@ -31,23 +29,10 @@ module.exports = (Type) => {
 
     ret.state = () => state
 
-    ret.join = replica.join
-
-    if (!Type.join) {
-      Type.join = replica.join
-    }
-    if (!Type.initial) {
-      Type.initial = replica.initial
-    }
+    ret.join = Type.join
 
     return ret
   }
-
-  const proto = prototypeFor(Type)
-
-  Object.setPrototypeOf(type, proto)
-
-  return type
 }
 
 class ChangeEmitter {
@@ -66,14 +51,5 @@ class ChangeEmitter {
     events.forEach((event) => {
       this._client.emit('change', event)
     })
-  }
-}
-
-function prototypeFor (Type) {
-  const instance = Type()
-  return {
-    initial: instance.initial,
-    join: instance.join,
-    value: instance.value
   }
 }
