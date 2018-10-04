@@ -174,6 +174,8 @@ The following types are built-in:
 | Observed-Remove Map | `ormap` |  `.remove(key)`, `applySub(key, crdt_name, mutator_name, ...args)`  | Object |
 
 
+### Embedding CRDTs in ORMaps
+
 OR-Maps support embedding of other causal CRDTs. Example:
 
 ```js
