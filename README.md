@@ -195,6 +195,16 @@ Of this collection, causal CRDTs are:
 * ORMap
 * RWORSet
 
+### Sets, uniqueness and object id
+
+Causal sets (AWORSet, RWORSet) and those depending on it (MVReg) implement the JavaScript set semantics, where uniqueness is defined by the uniqueness properties in JS native Sets.
+
+If you want to use objects as values, when you serialize / deserialize them, you lose the identity and the JS uniqueness semantics in Sets.
+
+You can, however, customize object identity by providing an `id` atribute. If this attribute is present in value objects, these CRDTs will use it as the key for comparison.
+
+(Uniqueness in these values defaults to primitive uniqueness semantics, like for strings and numbers).
+
 
 ## Static methods
 
