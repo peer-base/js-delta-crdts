@@ -23,24 +23,32 @@ class DotMap {
   }
 
   join (other) {
+    return DotMap.join(this, other)
+  }
+
+  static join (self, other) {
+    if (!(self instanceof DotMap)) {
+      self = dotMapFromRaw(self)
+    }
+
     if (!(other instanceof DotMap)) {
       other = dotMapFromRaw(other)
     }
 
-    const allKeys = new Set(this.state.keys())
+    const allKeys = new Set(self.state.keys())
     for (let key of other.state.keys()) {
       allKeys.add(key)
     }
 
-    const newCausalContext = this.cc.join(other.cc)
+    const newCausalContext = self.cc.join(other.cc)
     const newMap = new Map()
     const result = new DotMap(newCausalContext, newMap)
-    result.type = this.type || (other && other.type)
+    result.type = self.type || (other && other.type)
 
     for (let key of allKeys) {
-      const sub1 = this.state.has(key) && this.state.get(key)
+      const sub1 = self.state.has(key) && self.state.get(key)
       if (sub1) {
-        sub1.cc = this.cc
+        sub1.cc = self.cc
       }
 
       const sub2 = other.state.has(key) && other.state.get(key)

@@ -84,25 +84,32 @@ class DotSet {
   }
 
   join (other, joinValues) {
+    return DotSet.join(this, other, joinValues)
+  }
+
+  static join (self, other, joinValues) {
+    if (!(self instanceof DotSet)) {
+      self = dotSetFromRaw(self)
+    }
     if (!(other instanceof DotSet)) {
       other = dotSetFromRaw(other)
     }
 
-    const keys = new Set(this.ds.keys())
+    const keys = new Set(self.ds.keys())
     for (let key of other.ds.keys()) { keys.add(key) }
 
     // clone map so that we return something immutable
-    const ds = new Map(this.ds)
+    const ds = new Map(self.ds)
 
     for (let key of keys) {
       const dot = DotSet.dotForKey(key)
       if (!other.ds.has(key)) {
-        if (this.ds.has(key) && other.cc.dotIn(dot)) {
+        if (self.ds.has(key) && other.cc.dotIn(dot)) {
           ds.delete(key)
         }
-      } else if (!this.ds.has(key)) {
+      } else if (!self.ds.has(key)) {
         // we don't have it
-        if (!this.cc.dotIn(dot)) {
+        if (!self.cc.dotIn(dot)) {
           ds.set(key, other.ds.get(key))
         }
       } else {
@@ -113,9 +120,9 @@ class DotSet {
       }
     }
 
-    const cc = this.cc.join(other.cc)
+    const cc = self.cc.join(other.cc)
     const result = new DotSet(ds, cc)
-    result.type = this.type || other.type
+    result.type = self.type || other.type
 
     return result
   }
