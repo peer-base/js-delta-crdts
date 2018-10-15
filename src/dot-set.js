@@ -18,6 +18,9 @@ class DotSet {
   }
 
   static keyForDot (dot) {
+    if ((typeof dot === 'object') && dot.hasOwnProperty('id')) {
+      return JSON.stringify(dot.id)
+    }
     return JSON.stringify(dot)
   }
 
@@ -49,7 +52,8 @@ class DotSet {
     const res = new DotSet()
     for (let mapped of this.ds) {
       const currentValue = mapped[1]
-      if (currentValue === val) {
+      if (((typeof val === 'object') && val.hasOwnProperty('id') && (val.id === mapped[1].id)) ||
+          (currentValue === val)) {
         const key = mapped[0]
         res.cc.insertDot(DotSet.dotForKey(key))
         this.ds.delete(key)
