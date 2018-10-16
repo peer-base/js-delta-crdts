@@ -18,9 +18,6 @@ class DotSet {
   }
 
   static keyForDot (dot) {
-    if ((typeof dot === 'object') && dot.hasOwnProperty('id')) {
-      return JSON.stringify(dot.id)
-    }
     return JSON.stringify(dot)
   }
 
