@@ -8,7 +8,7 @@ module.exports = (object) => {
     return object
   }
   let hashValue
-  if (typeof (object) === 'object' && object.hasOwnProperty('hashCode')) {
+  if (object.hasOwnProperty('hashCode')) {
     hashValue = object.hashCode
   } else {
     hashValue = hash(object)
