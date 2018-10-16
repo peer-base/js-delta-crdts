@@ -197,14 +197,11 @@ Of this collection, causal CRDTs are:
 
 ### Sets, uniqueness and object id
 
-Causal sets (AWORSet, RWORSet) and those depending on it (MVReg) implement the JavaScript set semantics, where uniqueness is defined by the uniqueness properties in JS native Sets.
+For testing uniqueness in a way that is safe when replicas are distributed, for objects we calculate the hash using [the `hast-it` package](https://github.com/planttheidea/hash-it).
 
-If you want to use objects as values, when you serialize / deserialize them, you lose the identity and the JS uniqueness semantics in Sets.
+If you want, you can override it by providing a `hashCode` attribute in your object.
 
-You can, however, customize object identity by providing an `id` atribute. If this attribute is present in value objects, these CRDTs will use it as the key for comparison.
-
-(Uniqueness in these values defaults to primitive uniqueness semantics, like for strings and numbers).
-
+For all objects where `typeof object !== 'object'`, we use the value itself as comparison.
 
 ## Static methods
 

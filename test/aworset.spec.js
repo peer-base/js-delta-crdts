@@ -42,10 +42,15 @@ describe('aworset', () => {
     })
 
     it('deduplicates object with id', () => {
-      aworset.add({id: 1, value: 1})
-      aworset.add({id: 1, value: 2})
+      aworset.add({value: 'AAA'})
+      aworset.add({value: 'AAA'})
       expect(aworset.value().size).to.equal(1)
-      expect(aworset.value()).to.deep.equal(new Set([{id: 1, value: 2}]))
+      expect(aworset.value()).to.deep.equal(new Set([{value: 'AAA'}]))
+    })
+
+    it('can remove', () => {
+      aworset.remove({value: 'AAA'})
+      expect(aworset.value().size).to.equal(0)
     })
   })
 
