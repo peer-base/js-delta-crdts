@@ -4,16 +4,18 @@
   "description": "Delta-based State CRDTs",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha test",
+    "test": "npm run test:node && npm run test:browser",
+    "test:node": "aegir test --target node",
+    "test:browser": "aegir test --target browser",
     "lint": "standard"
   },
   "author": "Pedro Teixeira <i@pgte.me>",
   "license": "MIT",
   "devDependencies": {
+    "aegir": "^15.3.1",
     "chai": "^4.1.2",
     "delta-crdts-msgpack-codec": "^0.2.0",
     "dirty-chai": "^2.0.1",
-    "mocha": "^5.1.1",
     "pre-commit": "^1.2.2",
     "standard": "^11.0.1"
   },
