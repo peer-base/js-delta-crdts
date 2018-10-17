@@ -2,6 +2,10 @@
 
 const Type = require('./type')
 
+module.exports = (typeName) => {
+  return Type(module.exports.type(typeName))
+}
+
 const types = {
   gcounter: require('./gcounter'),
   pncounter: require('./pncounter'),
@@ -18,10 +22,6 @@ const types = {
   lwwreg: require('./lwwreg'),
   rga: require('./rga'),
   ormap: require('./ormap')
-}
-
-module.exports = (typeName) => {
-  return Type(module.exports.type(typeName))
 }
 
 module.exports.type = (typeName) => {

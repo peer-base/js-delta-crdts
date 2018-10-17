@@ -3,6 +3,7 @@
 const CausalContext = require('./causal-context')
 const CustomSet = require('./custom-set')
 const flatMap = require('array.prototype.flatmap')
+const CRDT = require('./')
 
 class DotMap {
   constructor (cc, state) {
@@ -84,7 +85,6 @@ function join (s1, s2) {
   if (typeof s1 === 'function') {
     return s1.join(s2)
   } else {
-    const CRDT = require('./')
     const type = CRDT.type(s1.type || s2.type)
     return type.join(s1, s2)
   }
