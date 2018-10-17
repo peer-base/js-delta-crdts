@@ -2,6 +2,7 @@
 
 const DotMap = require('./dot-map')
 const CausalContext = require('./causal-context')
+const CRDT = require('./')
 
 module.exports = {
   initial () { return new DotMap() },
@@ -10,7 +11,6 @@ module.exports = {
     const result = {}
     for (const [key, subState] of s.state) {
       const typeName = subState.type
-      const CRDT = require('./')
       const type = CRDT.type(typeName)
       result[key] = type.value(subState)
     }
@@ -19,7 +19,6 @@ module.exports = {
   },
   mutators: {
     applySub (id, s, key, typeName, mutatorName, ...args) {
-      const CRDT = require('./')
       const type = CRDT.type(typeName)
       if (!type) {
         throw new Error('unknown type name')
@@ -41,7 +40,6 @@ module.exports = {
       const dots = new Map((dotStore && dotStore.dots && dotStore.dots()) || new Set())
       const newCC = new CausalContext(dots)
 
-      const CRDT = require('./')
       const type = CRDT.type(dotStore.type)
       if (!type) {
         throw new Error('unknown type name')
