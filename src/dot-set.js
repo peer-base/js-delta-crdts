@@ -2,6 +2,7 @@
 
 const CausalContext = require('./causal-context')
 const CustomSet = require('./custom-set')
+const objectKey = require('./object-key')
 
 class DotSet {
   constructor (ds, cc) {
@@ -47,12 +48,13 @@ class DotSet {
 
   removeValue (val) {
     const res = new DotSet()
+    const valueKey = objectKey(val)
     for (let mapped of this.ds) {
-      const currentValue = mapped[1]
-      if (currentValue === val) {
-        const key = mapped[0]
-        res.cc.insertDot(DotSet.dotForKey(key))
-        this.ds.delete(key)
+      const currentValueKey = objectKey(mapped[1])
+      if (currentValueKey === valueKey) {
+        const dotKey = mapped[0]
+        res.cc.insertDot(DotSet.dotForKey(dotKey))
+        this.ds.delete(dotKey)
       }
     }
     res.cc.compact()

@@ -195,6 +195,13 @@ Of this collection, causal CRDTs are:
 * ORMap
 * RWORSet
 
+### Sets, uniqueness and object id
+
+For testing uniqueness in a way that is safe when replicas are distributed, for objects we calculate the hash using [the `hast-it` package](https://github.com/planttheidea/hash-it).
+
+If you want, you can override it by providing a `hashCode` attribute in your object.
+
+For all objects where `typeof object !== 'object'`, we use the value itself as comparison.
 
 ## Static methods
 

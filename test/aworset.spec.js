@@ -40,6 +40,18 @@ describe('aworset', () => {
     it('is now empty', () => {
       expect(aworset.value().size).to.equal(0)
     })
+
+    it('deduplicates object with id', () => {
+      aworset.add({value: 'AAA'})
+      aworset.add({value: 'AAA'})
+      expect(aworset.value().size).to.equal(1)
+      expect(aworset.value()).to.deep.equal(new Set([{value: 'AAA'}]))
+    })
+
+    it('can remove', () => {
+      aworset.remove({value: 'AAA'})
+      expect(aworset.value().size).to.equal(0)
+    })
   })
 
   describe('together', () => {
