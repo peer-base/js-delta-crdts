@@ -62,8 +62,6 @@ describe('ormap', () => {
       rreplica.applySub('om', 'ormap', 'applySub', 'a', 'mvreg', 'write', 'A1')
       expect(rreplica.value().om.a).to.deep.equal(new Set(['A1']))
       rreplica.applySub('om', 'ormap', 'remove', 'a')
-      expect(rreplica.value()).to.deep.equal({om: {}})
-      rreplica.remove('om')
       expect(rreplica.value()).to.deep.equal({})
     })
   })
