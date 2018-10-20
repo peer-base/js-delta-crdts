@@ -59,15 +59,15 @@ describe('ormap', () => {
 
     it('can embed ormap', () => {
       const rreplica = ORMap('id1')
-      rreplica.applySub('om', 'ormap', 'applySub', 'a', 'lwwreg', 'write', 1 ,'A1')
-      rreplica.applySub('om', 'ormap', 'applySub', 'b', 'lwwreg', 'write', 2 ,'A1')
-      rreplica.applySub('om2', 'ormap', 'applySub', 'a2', 'lwwreg', 'write', 2 ,'A2')
+      rreplica.applySub('om', 'ormap', 'applySub', 'a', 'lwwreg', 'write', 1, 'A1')
+      rreplica.applySub('om', 'ormap', 'applySub', 'b', 'lwwreg', 'write', 2, 'A1')
+      rreplica.applySub('om2', 'ormap', 'applySub', 'a2', 'lwwreg', 'write', 2, 'A2')
       expect(rreplica.value().om.a).to.deep.equal('A1')
       expect(rreplica.value().om.b).to.deep.equal('A1')
       expect(rreplica.value().om2.a2).to.deep.equal('A2')
       rreplica.applySub('om', 'ormap', 'remove', 'a')
-      rreplica.remove('om2');
-      expect(rreplica.value()).to.deep.equal({om:{b: 'A1'}})
+      rreplica.remove('om2')
+      expect(rreplica.value()).to.deep.equal({om: {b: 'A1'}})
     })
   })
 
