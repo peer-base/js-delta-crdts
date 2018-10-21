@@ -183,9 +183,9 @@ OR-Maps support embedding of other causal CRDTs. Example:
 
 ```js
 const ORMap = CRDT('ormap')
-const m = ormap('id1')
-const delta = m.applySub('a', 'mvreg', 'write', 'A'))
-console.log(ormap.value()) // => {a: new Set(['A'])}
+const m = ORMap('id1')
+const delta = m.applySub('a', 'mvreg', 'write', 'A')
+console.log(m.value()) // => {a: new Set(['A'])}
 ```
 
 Of this collection, causal CRDTs are:
