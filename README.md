@@ -129,19 +129,22 @@ const replica = CRDT('zero')('node id')
 
 The following types are built-in:
 
+(* means that the type is causal and can be embedded in an ORMap)
+
 ## Counters
 
 | Name | Identifier | Mutators | Value Type |
 |------|------------|----------|------------|
-| Increment-only Counter | `gcounter` | `.inc()` | int |
+| Increment-only Counter| `gcounter` | `.inc()` | int |
 | PN-Counter | `pncounter` |   `.inc()`,`.dec()` | int |
 | Lex-Counter | `lexcounter` |   `.inc()`,`.dec()` | int |
+| Causal Counter *| `ccounter` |   `.inc()`,`.dec()` | int |
 
 ## Flags
 | Name | Identifier | Mutators | Value Type |
 |------|------------|----------|------------|
-| Enable-Wins Flag | `ewflag` | `.enable()`, `.disable()` | Boolean |
-| Disable-Wins Flag | `dwflag` | `.enable()`, `.disable()` | Boolean |
+| Enable-Wins Flag *| `ewflag` | `.enable()`, `.disable()` | Boolean |
+| Disable-Wins Flag *| `dwflag` | `.enable()`, `.disable()` | Boolean |
 
 
 ## Sets
@@ -150,8 +153,8 @@ The following types are built-in:
 |------|------------|----------|------------|
 | Grow-Only Set | `gset` | `.add(element)` | Set |
 | Two-Phase Set | `2pset` |   `.add(element)`, `.remove(element)` | Set |
-| Add-Wins-Observed-Remove Set | `aworset` | `.add(element)`, `.remove(element)` | Set |
-| Remove-Wins-Observed-Remove Set | `rworset` | `.add(element)`, `.remove(element)` | Set |
+| Add-Wins-Observed-Remove Set *| `aworset` | `.add(element)`, `.remove(element)` | Set |
+| Remove-Wins-Observed-Remove Set *| `rworset` | `.add(element)`, `.remove(element)` | Set |
 | Remove-Wins-Last-Write-Wins Set | `rwlwwset` | `.add(element)`, `.remove(element)` | Set |
 
 ## Arrays
@@ -165,13 +168,13 @@ The following types are built-in:
 | Name | Identifier | Mutators | Value Type |
 |------|------------|----------|------------|
 | Last-Write-Wins Register | `lwwreg` |  `.write(value)`  | Value |
-| Multi-Value Register | `mvreg` |  `.write(value)`  | Array of concurrent values |
+| Multi-Value Register *| `mvreg` |  `.write(value)`  | Array of concurrent values |
 
 ## Maps
 
 | Name | Identifier | Mutators | Value Type |
 |------|------------|----------|------------|
-| Observed-Remove Map | `ormap` |  `.remove(key)`, `applySub(key, crdt_name, mutator_name, ...args)`  | Object |
+| Observed-Remove Map *| `ormap` |  `.remove(key)`, `applySub(key, crdt_name, mutator_name, ...args)`  | Object |
 
 
 ### Embedding CRDTs in ORMaps
