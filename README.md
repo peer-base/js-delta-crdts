@@ -168,7 +168,7 @@ The following types are built-in:
 | Name | Identifier | Mutators | Value Type |
 |------|------------|----------|------------|
 | Last-Write-Wins Register | `lwwreg` |  `.write(value)`  | Value |
-| Multi-Value Register *| `mvreg` |  `.write(value)`  | Array of concurrent values |
+| Multi-Value Register *| `mvreg` |  `.write(value)`  | Set of concurrent values |
 
 ## Maps
 
