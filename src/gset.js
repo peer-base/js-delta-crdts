@@ -12,7 +12,7 @@ module.exports = {
     }
     return targetSet
   },
-  value (s) { return s },
+  value (s) { return new Set(s) },
   mutators: {
     add (id, s, value) {
       return new Set([value])
