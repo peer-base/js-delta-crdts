@@ -168,7 +168,7 @@ The following types are built-in:
 | Name | Identifier | Mutators | Value Type |
 |------|------------|----------|------------|
 | Last-Write-Wins Register | `lwwreg` |  `.write(value)`  | Value |
-| Multi-Value Register *| `mvreg` |  `.write(value)`  | Array of concurrent values |
+| Multi-Value Register *| `mvreg` |  `.write(value)`  | Set of concurrent values |
 
 ## Maps
 
@@ -183,9 +183,9 @@ OR-Maps support embedding of other causal CRDTs. Example:
 
 ```js
 const ORMap = CRDT('ormap')
-const m = ormap('id1')
-const delta = m.applySub('a', 'mvreg', 'write', 'A'))
-console.log(ormap.value()) // => {a: new Set(['A'])}
+const m = ORMap('id1')
+const delta = m.applySub('a', 'mvreg', 'write', 'A')
+console.log(m.value()) // => {a: new Set(['A'])}
 ```
 
 Of this collection, causal CRDTs are:
