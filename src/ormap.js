@@ -10,6 +10,7 @@ module.exports = {
   value (s) {
     const result = {}
     for (const [key, subState] of s.state) {
+      if (subState.isBottom && subState.isBottom()) continue
       const typeName = subState.type
       const type = CRDT.type(typeName)
       result[key] = type.value(subState)
