@@ -45,6 +45,7 @@ module.exports = {
         throw new Error('unknown type name')
       }
       const newSubState = type.initial()
+      newSubState.type = dotStore.type
 
       return new DotMap(newCC, new Map([[key, newSubState]]))
     }

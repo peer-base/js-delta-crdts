@@ -7,6 +7,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const CRDT = require('../')
+const DotSet = require('../src/dot-set')
 const transmit = require('./transmit')
 
 describe('ormap', () => {
@@ -114,6 +115,7 @@ describe('ormap', () => {
       replica2.apply(transmit(delta1))
       expect(replica2.value().b).to.deep.equal(new Set(['BB']))
       expect(replica1.value().b).to.deep.equal(new Set(['BB']))
+      expect(replica1.state().state.get('b')).instanceof(DotSet)
     })
   })
 })
