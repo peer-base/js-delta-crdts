@@ -99,7 +99,13 @@ function dotMapFromRaw (base) {
     }
     cc.dc = dc
   }
-  const dotMap = new DotMap(cc, base.state)
+  const stateFromRaw = new Map()
+  for (const key of base.state.keys()) {
+    const value = base.state.get(key)
+    const type = CRDT.type(value.type)
+    stateFromRaw.set(key, type.join(value, type.initial()))
+  }
+  const dotMap = new DotMap(cc, stateFromRaw)
   dotMap.type = base.type
   return dotMap
 }
