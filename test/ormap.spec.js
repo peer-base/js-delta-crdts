@@ -117,5 +117,12 @@ describe('ormap', () => {
       expect(replica1.value().b).to.deep.equal(new Set(['BB']))
       expect(replica1.state().state.get('b')).instanceof(DotSet)
     })
+
+    it('removals are stored in state', () => {
+      replica1.remove('b')
+      expect(replica1.value().b).to.not.exist()
+      replica2.apply(replica1.state())
+      expect(replica2.value().b).to.not.exist()
+    })
   })
 })

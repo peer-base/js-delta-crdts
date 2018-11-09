@@ -69,10 +69,8 @@ class DotMap {
 
       newSub.type = sub1.type || sub2.type
 
-      if (!(newSub.isBottom && newSub.isBottom())) {
-        newSub.cc = null
-        newMap.set(key, newSub)
-      }
+      newSub.cc = null
+      newMap.set(key, newSub)
     }
 
     return result
