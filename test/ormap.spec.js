@@ -57,6 +57,16 @@ describe('ormap', () => {
     it('can get value', () => {
       expect(ormap.value()).to.deep.equal({b: new Set(['B'])})
     })
+    
+    it('supports embedding and removing another ormap', () => {
+      ormap = ORMap('id1')
+      ormap.applySub('m', 'ormap', 'applySub', 'a', 'mvreg', 'write', 'foo')
+      expect(ormap.value()).to.deep.equal({m: {a: new Set(['foo'])}})
+      ormap.applySub('m', 'ormap', 'remove', 'a')
+      expect(ormap.value()).to.deep.equal({m: {}})
+      ormap.remove('m');
+      expect(ormap.value()).to.deep.equal({})
+    })
   })
 
   describe('together', () => {
