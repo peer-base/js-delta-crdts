@@ -42,10 +42,15 @@ describe('rga', () => {
     })
 
     it('can insert at correct spot after deleted sequence', () => {
+      expect(rga.value()).to.deep.equal(['a', 'b'])
       rga.push('c')
+      expect(rga.value()).to.deep.equal(['a', 'b', 'c'])
       rga.push('d')
+      expect(rga.value()).to.deep.equal(['a', 'b', 'c', 'd'])
       rga.removeAt(1)
+      expect(rga.value()).to.deep.equal(['a', 'c', 'd'])
       rga.removeAt(1)
+      expect(rga.value()).to.deep.equal(['a', 'd'])
       rga.insertAt(2, 'e')
       expect(rga.value()).to.deep.equal(['a', 'd', 'e'])
     })
