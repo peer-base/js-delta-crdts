@@ -208,6 +208,12 @@ For all objects where `typeof object !== 'object'`, we use the value itself as c
 
 ## Static methods
 
+You may get the static definition of a type by doing
+
+```js
+const type = CRDT.type(typeName)
+```
+
 Each type has a series of static methods may need to use:
 
 ### `Type.initial()`
@@ -215,7 +221,7 @@ Each type has a series of static methods may need to use:
 Returns the initial state for the type. Example:
 
 ```js
-const GCounter = CRDT('gcounter')
+const GCounter = CRDT.type('gcounter')
 const initial = GCounter.initial()
 ```
 
@@ -229,7 +235,7 @@ Returns the view value of a given state.
 Joins two states (or deltas) and returns the result.
 
 ```js
-const GCounter = CRDT('gcounter')
+const GCounter = CRDT.type('gcounter')
 
 const state = GCounter.join(delta1, delta)
 
