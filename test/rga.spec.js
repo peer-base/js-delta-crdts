@@ -78,6 +78,16 @@ describe('rga', () => {
       expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
     })
 
+    it('the first can handle having the same deltas applied', () => {
+      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
+      expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
+    })
+
+    it('the first can handle having its own deltas reapplied', () => {
+      deltas[0].forEach((delta) => replica1.apply(transmit(delta)))
+      expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
+    })
+
     it('and the second also converges', () => {
       deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
       expect(replica2.value()).to.deep.equal(['c', 'd', 'a', 'b'])
