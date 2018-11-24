@@ -88,6 +88,11 @@ describe('rga', () => {
       expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
     })
 
+    it('the first can handle having its own state reapplied', () => {
+      deltas[0].forEach((delta) => replica1.apply(transmit(replica1.state())))
+      expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
+    })
+
     it('and the second also converges', () => {
       deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
       expect(replica2.value()).to.deep.equal(['c', 'd', 'a', 'b'])
@@ -160,6 +165,13 @@ describe('rga', () => {
       replica1.apply(transmit(deltas2))
       expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
       expect(replica2.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
+    })
+
+    it('can handle having the state joined with itself', () => {
+      replica1.apply(transmit(replica1.state()))
+      expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
+      replica1.apply(transmit(replica2.state()))
+      expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
     })
   })
 })
