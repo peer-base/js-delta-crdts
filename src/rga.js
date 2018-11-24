@@ -142,10 +142,9 @@ function insertAllAt (id, state, pos, values) {
   const [added, removed, edges] = state
   let i = 0
   let left = null
-  while (i < pos) {
-    if (removed.has(left)) {
-      left = edges.get(left)
-      continue
+  while (i < pos && edges.has(left)) {
+    if (!removed.has(left)) {
+      i++
     }
     if (edges.has(left)) {
       left = edges.get(left)
@@ -153,7 +152,6 @@ function insertAllAt (id, state, pos, values) {
     while (removed.has(left)) {
       left = edges.get(left)
     }
-    i++
   }
 
   const newAdded = new Map()
