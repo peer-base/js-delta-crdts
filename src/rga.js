@@ -8,8 +8,6 @@
 //
 // As defined in http://hal.upmc.fr/inria-00555588/document
 
-const cuid = require('cuid')
-
 module.exports = {
   initial: () => [
     new Map([[null, null]]), // VA
@@ -34,7 +32,7 @@ module.exports = {
 
   mutators: {
     addRight (id, s, beforeVertex, value) {
-      const elemId = cuid()
+      const elemId = createUniqueId(id)
       const edges = s[2]
       let l = beforeVertex
       let r = edges.get(beforeVertex)
@@ -52,7 +50,7 @@ module.exports = {
         last = edges.get(last)
       }
 
-      const elemId = cuid()
+      const elemId = createUniqueId(id)
 
       const newAdded = new Map([[elemId, value]])
       if (added.has(last)) {
@@ -123,12 +121,11 @@ function join (s1, s2) {
       return
     }
 
-    while (right && newKey < right) {
+    while (right && (newKey < right)) {
       leftEdge = right
       right = resultEdges.get(right)
     }
 
-    resultEdges.delete(leftEdge)
     resultEdges.set(leftEdge, newKey)
     resultEdges.set(newKey, right)
   }
@@ -167,7 +164,7 @@ function insertAllAt (id, state, pos, values) {
   newEdges.set(null, left)
 
   values.forEach((value) => {
-    const newId = cuid()
+    const newId = createUniqueId(id)
     newAdded.set(newId, value)
     newEdges.set(left, newId)
     left = newId
@@ -198,4 +195,27 @@ function removeAt (id, state, pos) {
   }
 
   return remove(id, state, elementId)
+}
+
+function createUniqueId (id) {
+  if (!Buffer.isBuffer(id)) {
+    id = Buffer.from(id)
+  }
+
+  const timestamp = bufferFromUint(Date.now())
+
+  const random = bufferFromUint(Math.random() * Number.MAX_SAFE_INTEGER)
+
+  const uid = Buffer.concat([timestamp, id, random]).toString('base64')
+  return uid
+}
+
+function bufferFromUint (uint) {
+  const target = new Array(4)
+  for (let i = target.length; i >= 0; i--) {
+    target[i] = uint & 255
+    uint = uint >>> 8
+  }
+  // console.log(buffer)
+  return Buffer.from(target)
 }
