@@ -9,6 +9,8 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 const transmit = require('./transmit')
 
+const SMALL_BIT = 500
+
 describe('rga', () => {
   describe('local', () => {
     let RGA
@@ -73,8 +75,25 @@ describe('rga', () => {
       deltas[1].push(replica2.push('d'))
     })
 
+    it('waits a small bit', (done) => setTimeout(done, SMALL_BIT))
+
     it('the first converges', () => {
       deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
+      expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
+    })
+
+    it('the first can handle having the same deltas applied', () => {
+      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
+      expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
+    })
+
+    it('the first can handle having its own deltas reapplied', () => {
+      deltas[0].forEach((delta) => replica1.apply(transmit(delta)))
+      expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
+    })
+
+    it('the first can handle having its own state reapplied', () => {
+      deltas[0].forEach((delta) => replica1.apply(transmit(replica1.state())))
       expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
     })
 
@@ -109,28 +128,31 @@ describe('rga', () => {
 
     it('the first converges', () => {
       deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
-      expect(replica1.value()).to.deep.equal(['c', 'b', 'g', 'h', 'e', 'f'])
+      expect(replica1.value()).to.deep.equal([ 'c', 'b', 'g', 'h', 'e', 'f' ])
     })
 
     it('and the second also converges', () => {
       deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
-      expect(replica2.value()).to.deep.equal(['c', 'b', 'g', 'h', 'e', 'f'])
+      expect(replica2.value()).to.deep.equal([ 'c', 'b', 'g', 'h', 'e', 'f' ])
     })
+
+    it('waits a small bit', (done) => setTimeout(done, SMALL_BIT))
 
     it('values can be inserted concurrently', () => {
       deltas = [[], []]
       deltas[0].push(replica1.insertAllAt(3, ['g.1']))
+      expect(replica1.value()).to.deep.equal([ 'c', 'b', 'g', 'g.1', 'h', 'e', 'f' ])
       deltas[1].push(replica2.insertAt(3, 'g.2'))
     })
 
     it('the first converges', () => {
       deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
-      expect(replica1.value()).to.deep.equal(['c', 'b', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
+      expect(replica1.value()).to.deep.equal([ 'c', 'b', 'g', 'g.2', 'g.1', 'h', 'e', 'f' ])
     })
 
     it('and the second also converges', () => {
       deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
-      expect(replica2.value()).to.deep.equal(['c', 'b', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
+      expect(replica2.value()).to.deep.equal([ 'c', 'b', 'g', 'g.2', 'g.1', 'h', 'e', 'f' ])
     })
 
     it('can update at', () => {
@@ -139,7 +161,9 @@ describe('rga', () => {
       expect(replica2.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f'])
     })
 
-    it('can join 2 deltas', () => {
+    it('waits a small bit', (done) => setTimeout(done, SMALL_BIT))
+
+    it('can join 2 deltas', async () => {
       const deltaBuffer1 = [replica1.push('k'), replica1.push('l')]
       const deltaBuffer2 = [replica2.push('m'), replica2.push('n')]
       expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'k', 'l'])
@@ -150,6 +174,13 @@ describe('rga', () => {
       replica1.apply(transmit(deltas2))
       expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
       expect(replica2.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
+    })
+
+    it('can handle having the state joined with itself', () => {
+      replica1.apply(transmit(replica1.state()))
+      expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
+      replica1.apply(transmit(replica2.state()))
+      expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
     })
   })
 })
