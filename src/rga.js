@@ -213,7 +213,7 @@ function createUniqueId (id) {
 }
 
 function radix64Encode (buf) {
-  return radix64.encodeBuffer(buf, 16)
+  return radix64.encodeBuffer(buf)
 }
 
 function bufferFromUint (uint) {
