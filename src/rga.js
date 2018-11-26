@@ -8,6 +8,8 @@
 //
 // As defined in http://hal.upmc.fr/inria-00555588/document
 
+const radix64 = require('radix-64')()
+
 module.exports = {
   initial: () => [
     new Map([[null, null]]), // VA
@@ -206,8 +208,12 @@ function createUniqueId (id) {
 
   const random = bufferFromUint(Math.random() * Number.MAX_SAFE_INTEGER)
 
-  const uid = Buffer.concat([timestamp, id, random]).toString('base64')
+  const uid = radix64Encode(Buffer.concat([timestamp, id, random]))
   return uid
+}
+
+function radix64Encode (buf) {
+  return radix64.encodeBuffer(buf, 16)
 }
 
 function bufferFromUint (uint) {

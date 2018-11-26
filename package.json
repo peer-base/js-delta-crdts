@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "array.prototype.flatmap": "^1.2.1",
-    "hash-it": "^4.0.3"
+    "hash-it": "^4.0.3",
+    "radix-64": "^1.0.4"
   },
   "pre-commit": [
     "lint",
