@@ -7,21 +7,36 @@ module.exports = (Type) => {
     let state = Type.initial()
     const ret = new EventEmitter()
     const emitter = new ChangeEmitter(ret)
+    let valueCache = undefined
 
     Object.keys(Type.mutators || {}).forEach((mutatorName) => {
       const mutator = Type.mutators[mutatorName]
       ret[mutatorName] = (...args) => {
         const delta = mutator(id, state, ...args)
-        state = Type.join.call(emitter, state, delta)
+        const newState = Type.join.call(emitter, state, delta)
+        if (Type.incrementalValue) {
+          valueCache = Type.incrementalValue(state, newState, delta, valueCache)
+        }
+        state = newState
         emitter.emitAll()
         return delta
       }
     })
 
-    ret.value = () => Type.value(state)
+    ret.value = () => {
+      if (Type.incrementalValue && (valueCache !== undefined)) {
+        return valueCache.value
+      } else {
+        return Type.value(state)
+      }
+    }
 
     ret.apply = (delta) => {
-      state = Type.join.call(emitter, state, delta)
+      const newState = Type.join.call(emitter, state, delta)
+      if (Type.incrementalValue) {
+        valueCache = Type.incrementalValue(state, newState, delta, valueCache)
+      }
+      state = newState
       emitter.emitAll()
       ret.emit('state changed', state)
       return state

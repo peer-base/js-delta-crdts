@@ -32,6 +32,70 @@ module.exports = {
     return result
   },
 
+  incrementalValue (beforeState, newState, delta, cache = { value: [], indices: new Map() }) {
+    console.log('incrementalValue:', newState)
+    const { value, indices } = cache
+    const [ , beforeRemoved, beforeEdges] = beforeState
+    const [ , deltaRemoved, deltaEdges ] = delta
+    const [ newAdded, newRemoved, ] = newState
+
+    for (let removedId of deltaRemoved) {
+      if (!beforeRemoved.has(removedId) && indices.has(removedId)) {
+        const pos = indices.get(removedId) - 1
+        console.log('REMOVING %j AT POS', newAdded.get(removedId), pos)
+        value.splice(pos, 1)
+        incrementIndexAfter(removedId, -1)
+      }
+    }
+
+    let left = null
+    let right = deltaEdges.get(left)
+    let pos = 0
+
+    console.log('INDICES:', indices)
+
+    while (right) {
+      if (indices.has(right)) {
+        // already processed. Update current position
+        pos = indices.get(right)
+      } else {
+        // new element
+        if (!newRemoved.has(right)) {
+          // not removed
+          pos += 1
+          let beforeRight = beforeEdges.get(left)
+          while (beforeRight && (beforeRight !== right)) {
+            pos += 1
+            beforeRight = beforeEdges.get(beforeRight)
+          }
+        }
+        console.log('INSERTING %j AT POS', newAdded.get(right), pos)
+        value.splice(pos, 0, newAdded.get(right))
+        indices.set(right, pos)
+        incrementIndexAfter(right)
+      }
+
+      // continue iteration
+      left = right
+      right = deltaEdges.get(right)
+    }
+
+    return cache
+
+    function incrementIndexAfter (_id, incBy = 1) {
+      console.log('incrementIndexAfter', _id, incBy)
+      let id = _id
+      id = beforeEdges.get(id)
+      while (id) {
+        console.log('-- ', id)
+        let newValue = indices.get(id) + incBy
+        console.log('new value:', newValue)
+        indices.set(id, newValue)
+        id = beforeEdges.get(id)
+      }
+    }
+  },
+
   mutators: {
     addRight (id, s, beforeVertex, value) {
       const elemId = createUniqueId(id)
