@@ -1,3 +1,4 @@
+/* eslint max-depth: "off" */
 'use strict'
 
 // Replicable Growable Array (RGA)
@@ -30,6 +31,77 @@ module.exports = {
     }
 
     return result
+  },
+
+  incrementalValue (beforeState, newState, delta, cache = { value: [], indices: new Map() }) {
+    const { value, indices } = cache
+    const [ , beforeRemoved, beforeEdges ] = beforeState
+    const [ , deltaRemoved, deltaEdges ] = delta
+    const [ newAdded, newRemoved, newEdges ] = newState
+
+    for (let removedId of deltaRemoved) {
+      if ((!beforeRemoved.has(removedId)) && indices.has(removedId)) {
+        const pos = indices.get(removedId) - 1
+        value.splice(pos, 1)
+        incrementIndexAfter(removedId, -1)
+      }
+    }
+
+    let left = null
+    let right = deltaEdges.get(left)
+    let pos = 0
+
+    while (right) {
+      if (indices.has(right)) {
+        // already processed. Update current position
+        pos = indices.get(right)
+      } else {
+        // new element
+        if (!newRemoved.has(right)) {
+          // not removed
+          let beforeRight = beforeEdges.get(left)
+          while (beforeRight && (right < beforeRight)) {
+            if (!newRemoved.has(beforeRight)) {
+              pos += 1
+            }
+            beforeRight = beforeEdges.get(beforeRight)
+          }
+
+          value.splice(pos, 0, newAdded.get(right))
+          incrementIndexAfter(right)
+        }
+        pos += 1
+        indices.set(right, pos)
+      }
+
+      // continue iteration
+      left = right
+      right = deltaEdges.get(right)
+    }
+
+    // printIndices()
+
+    return cache
+
+    function incrementIndexAfter (_id, incBy = 1) {
+      let id = _id
+      id = newEdges.get(id)
+      while (id) {
+        if (indices.has(id)) {
+          let newValue = indices.get(id) + incBy
+          indices.set(id, newValue)
+        }
+        id = newEdges.get(id)
+      }
+    }
+
+    // function printIndices () {
+    //   console.log('------ >')
+    //   for (let [key, pos] of indices) {
+    //     console.log(newAdded.get(key) + ' => ' + pos)
+    //   }
+    //   console.log('< ------')
+    // }
   },
 
   mutators: {
