@@ -1,3 +1,4 @@
+/* eslint max-depth: "off" */
 'use strict'
 
 // Replicable Growable Array (RGA)
@@ -33,16 +34,14 @@ module.exports = {
   },
 
   incrementalValue (beforeState, newState, delta, cache = { value: [], indices: new Map() }) {
-    console.log('incrementalValue:', newState)
     const { value, indices } = cache
-    const [ , beforeRemoved, beforeEdges] = beforeState
+    const [ , beforeRemoved, beforeEdges ] = beforeState
     const [ , deltaRemoved, deltaEdges ] = delta
-    const [ newAdded, newRemoved, ] = newState
+    const [ newAdded, newRemoved, newEdges ] = newState
 
     for (let removedId of deltaRemoved) {
-      if (!beforeRemoved.has(removedId) && indices.has(removedId)) {
+      if ((!beforeRemoved.has(removedId)) && indices.has(removedId)) {
         const pos = indices.get(removedId) - 1
-        console.log('REMOVING %j AT POS', newAdded.get(removedId), pos)
         value.splice(pos, 1)
         incrementIndexAfter(removedId, -1)
       }
@@ -52,8 +51,6 @@ module.exports = {
     let right = deltaEdges.get(left)
     let pos = 0
 
-    console.log('INDICES:', indices)
-
     while (right) {
       if (indices.has(right)) {
         // already processed. Update current position
@@ -62,17 +59,19 @@ module.exports = {
         // new element
         if (!newRemoved.has(right)) {
           // not removed
-          pos += 1
           let beforeRight = beforeEdges.get(left)
-          while (beforeRight && (beforeRight > right)) {
-            pos += 1
+          while (beforeRight && (right < beforeRight)) {
+            if (!newRemoved.has(beforeRight)) {
+              pos += 1
+            }
             beforeRight = beforeEdges.get(beforeRight)
           }
+
+          value.splice(pos, 0, newAdded.get(right))
+          incrementIndexAfter(right)
         }
-        console.log('INSERTING %j AT POS', newAdded.get(right), pos)
-        value.splice(pos, 0, newAdded.get(right))
+        pos += 1
         indices.set(right, pos)
-        incrementIndexAfter(right)
       }
 
       // continue iteration
@@ -80,20 +79,29 @@ module.exports = {
       right = deltaEdges.get(right)
     }
 
+    // printIndices()
+
     return cache
 
     function incrementIndexAfter (_id, incBy = 1) {
-      console.log('incrementIndexAfter', _id, incBy)
       let id = _id
-      id = beforeEdges.get(id)
+      id = newEdges.get(id)
       while (id) {
-        console.log('-- ', id)
-        let newValue = indices.get(id) + incBy
-        console.log('new value:', newValue)
-        indices.set(id, newValue)
-        id = beforeEdges.get(id)
+        if (indices.has(id)) {
+          let newValue = indices.get(id) + incBy
+          indices.set(id, newValue)
+        }
+        id = newEdges.get(id)
       }
     }
+
+    // function printIndices () {
+    //   console.log('------ >')
+    //   for (let [key, pos] of indices) {
+    //     console.log(newAdded.get(key) + ' => ' + pos)
+    //   }
+    //   console.log('< ------')
+    // }
   },
 
   mutators: {

@@ -7,7 +7,7 @@ module.exports = (Type) => {
     let state = Type.initial()
     const ret = new EventEmitter()
     const emitter = new ChangeEmitter(ret)
-    let valueCache = undefined
+    let valueCache
 
     Object.keys(Type.mutators || {}).forEach((mutatorName) => {
       const mutator = Type.mutators[mutatorName]

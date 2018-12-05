@@ -71,14 +71,18 @@ describe('rga', () => {
     it('values can be written concurrently', () => {
       deltas[0].push(replica1.push('a'))
       deltas[0].push(replica1.push('b'))
+      expect(replica1.value()).to.deep.equal(['a', 'b'])
       deltas[1].push(replica2.push('c'))
       deltas[1].push(replica2.push('d'))
+      expect(replica2.value()).to.deep.equal(['c', 'd'])
     })
 
     it('waits a small bit', (done) => setTimeout(done, SMALL_BIT))
 
     it('the first converges', () => {
-      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
+      replica1.apply(transmit(deltas[1][0]))
+      expect(replica1.value()).to.deep.equal(['c', 'a', 'b'])
+      replica1.apply(transmit(deltas[1][1]))
       expect(replica1.value()).to.deep.equal(['c', 'd', 'a', 'b'])
     })
 
@@ -105,11 +109,13 @@ describe('rga', () => {
     it('values can be deleted concurrently', () => {
       deltas = [[], []]
       deltas[0].push(replica1.removeAt(1))
+      expect(replica1.value()).to.deep.equal(['c', 'a', 'b'])
       deltas[1].push(replica2.removeAt(2))
+      expect(replica2.value()).to.deep.equal(['c', 'd', 'b'])
     })
 
     it('the first converges', () => {
-      deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
+      replica1.apply(transmit(deltas[1][0]))
       expect(replica1.value()).to.deep.equal(['c', 'b'])
     })
 
