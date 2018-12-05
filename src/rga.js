@@ -64,7 +64,7 @@ module.exports = {
           // not removed
           pos += 1
           let beforeRight = beforeEdges.get(left)
-          while (beforeRight && (beforeRight !== right)) {
+          while (beforeRight && (beforeRight > right)) {
             pos += 1
             beforeRight = beforeEdges.get(beforeRight)
           }
