@@ -1,3 +1,4 @@
+/* eslint no-continue: "off" */
 'use strict'
 
 const DotMap = require('./dot-map')
