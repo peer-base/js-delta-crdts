@@ -124,6 +124,20 @@ CRDT.define('zero', Zero)
 const replica = CRDT('zero')('node id')
 ```
 
+### Support for incremental value computation
+
+It's possible to allow types to have incremental value computation. If a type supports that, the value is incrementally computed on each delta that is applied.
+
+To add support for incremental value computation to a CRDT, the type definition should support the following function:
+
+```js
+Type.incrementalValue = function (beforeState, newState, delta, cache = { value: <some initial value>, ... }) {
+  // ...
+}
+```
+
+As an example you can get inspiration from [the RGA implementation](src/rga.js).
+
 ## Types
 
 
