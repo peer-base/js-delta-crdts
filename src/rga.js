@@ -33,7 +33,8 @@ module.exports = {
     return result
   },
 
-  incrementalValue (beforeState, newState, delta, cache = { value: [], indices: new Map() }) {
+  // TODO: test and re-enable this:
+  disabledIncrementalValue (beforeState, newState, delta, cache = { value: [], indices: new Map() }) {
     const { value, indices } = cache
     const [ , beforeRemoved, beforeEdges ] = beforeState
     const [ , deltaRemoved, deltaEdges ] = delta
