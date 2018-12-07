@@ -27,7 +27,7 @@ module.exports = (Type) => {
 
     ret.value = () => {
       if (Type.incrementalValue && (valueCache !== undefined)) {
-        return valueCache.value
+        return valueCache.returnValue
       } else {
         return Type.value(state)
       }

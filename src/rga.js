@@ -34,23 +34,27 @@ module.exports = {
   },
 
   // TODO: test and re-enable this:
-  disabledIncrementalValue (beforeState, newState, delta, cache = { value: [], indices: new Map() }) {
+  incrementalValue (beforeState, newState, delta, cache = { value: [], indices: new Map() }) {
     const { value, indices } = cache
     const [ , beforeRemoved, beforeEdges ] = beforeState
     const [ , deltaRemoved, deltaEdges ] = delta
     const [ newAdded, newRemoved, newEdges ] = newState
 
     for (let removedId of deltaRemoved) {
+      console.log('# remove', newAdded.get(removedId))
       if ((!beforeRemoved.has(removedId)) && indices.has(removedId)) {
-        const pos = indices.get(removedId) - 1
+        const pos = indices.get(removedId)
+        console.log('# value before is', value)
+        console.log('# removing at pos', pos)
         value.splice(pos, 1)
+        console.log('# value now is', value)
         incrementIndexAfter(removedId, -1)
       }
     }
 
     let left = null
     let right = deltaEdges.get(left)
-    let pos = 0
+    let pos = -1
 
     while (right) {
       if (indices.has(right)) {
@@ -80,9 +84,9 @@ module.exports = {
       right = deltaEdges.get(right)
     }
 
-    // printIndices()
+    printIndices()
 
-    return cache
+    return { returnValue: [...value], value, indices: indices}
 
     function incrementIndexAfter (_id, incBy = 1) {
       let id = _id
@@ -96,13 +100,13 @@ module.exports = {
       }
     }
 
-    // function printIndices () {
-    //   console.log('------ >')
-    //   for (let [key, pos] of indices) {
-    //     console.log(newAdded.get(key) + ' => ' + pos)
-    //   }
-    //   console.log('< ------')
-    // }
+    function printIndices () {
+      console.log('------ >')
+      for (let [key, pos] of indices) {
+        console.log(newAdded.get(key) + ' => ' + pos)
+      }
+      console.log('< ------')
+    }
   },
 
   mutators: {
