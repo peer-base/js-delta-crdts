@@ -8,7 +8,7 @@ chai.use(dirtyChai)
 
 const CRDT = require('../')
 const DotSet = require('../src/dot-set')
-const transmit = require('./transmit')
+const transmit = require('./helpers/transmit')
 
 describe('ormap', () => {
   describe('local', () => {

@@ -7,7 +7,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const CRDT = require('../')
-const transmit = require('./transmit')
+const transmit = require('./helpers/transmit')
 
 describe('lexcounter', () => {
   describe('local', () => {
