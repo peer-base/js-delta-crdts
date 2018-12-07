@@ -9,8 +9,8 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 const Network = require('./helpers/network')
 
-const MAX_REPLICAS = 1 //10
-const MAX_OPS_PER_REPLICA = 8
+const MAX_REPLICAS = 2
+const MAX_OPS_PER_REPLICA = 10
 
 describe('rga hard', function () {
   this.timeout(30000)

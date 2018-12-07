@@ -54,7 +54,7 @@ module.exports = {
 
     let left = null
     let right = deltaEdges.get(left)
-    let pos = -1
+    let pos = 0
 
     while (right) {
       if (indices.has(right)) {
@@ -63,6 +63,7 @@ module.exports = {
       } else {
         // new element
         if (!newRemoved.has(right)) {
+          console.log('# inserting', newAdded.get(right))
           // not removed
           let beforeRight = beforeEdges.get(left)
           while (beforeRight && (right < beforeRight)) {
