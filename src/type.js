@@ -23,6 +23,8 @@ module.exports = (Type) => {
       }
     })
 
+    ret.id = id
+
     ret.value = () => {
       if (Type.incrementalValue && (valueCache !== undefined)) {
         return valueCache.value
