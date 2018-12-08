@@ -1,6 +1,7 @@
 'use strict'
 
 const EventEmitter = require('events')
+const { isCollection } = require('immutable')
 
 module.exports = (Type) => {
   return (id) => {
@@ -19,13 +20,20 @@ module.exports = (Type) => {
         }
         state = newState
         emitter.emitAll()
+        ret.emit('state changed', state)
         return delta
       }
     })
 
+    ret.id = id
+
     ret.value = () => {
       if (Type.incrementalValue && (valueCache !== undefined)) {
-        return valueCache.value
+        let returnValue = valueCache.value
+        if (isCollection(returnValue)) {
+          returnValue = returnValue.toJS()
+        }
+        return returnValue
       } else {
         return Type.value(state)
       }
