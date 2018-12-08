@@ -9,8 +9,8 @@ chai.use(dirtyChai)
 const CRDT = require('../')
 const Network = require('./helpers/network')
 
-const MAX_REPLICAS = 2
-const MAX_OPS_PER_REPLICA = 10
+const MAX_REPLICAS = 10
+const MAX_OPS_PER_REPLICA = 20
 
 describe('rga hard', function () {
   this.timeout(30000)
@@ -70,13 +70,14 @@ describe('rga hard', function () {
 
     it('makes assorted changes', async () => {
       for (let replica of replicas) {
-        for (let i = 0; i < MAX_OPS_PER_REPLICA; i ++) {
+        let monotonic = MAX_OPS_PER_REPLICA
+        for (let i = 0; i < MAX_OPS_PER_REPLICA; i++) {
           const arr = replica.value()
           if (!arr.length) {
             break
           }
           let delta
-          const remove = true // (Math.random() >= 0.5)
+          const remove = (Math.random() >= 0.5)
           if (remove) {
             // removeAt
             const index = Math.floor(Math.random() * arr.length)
@@ -89,7 +90,7 @@ describe('rga hard', function () {
           } else {
             // insertAt
             const index = Math.floor(Math.random() * arr.length)
-            const value = replica.id + '/' + arr.length
+            const value = replica.id + '/' + (++monotonic)
             insertedValues.push(value)
             delta = replica.insertAt(index, value)
             arr.splice(index, 0, value)
@@ -100,15 +101,12 @@ describe('rga hard', function () {
       }
 
       await network.deplete()
-
-      console.log('REMOVEDS:', [...removedValues])
     })
 
     it('all converges', () => {
       let expectedValue
       for (let replica of replicas) {
         const value = replica.value()
-        console.log('VALUE:', value)
         expect(value.length).to.equal(
           MAX_REPLICAS * MAX_OPS_PER_REPLICA + insertedValues.length - removedValues.size)
         if (!expectedValue) {

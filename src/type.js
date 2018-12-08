@@ -19,6 +19,7 @@ module.exports = (Type) => {
         }
         state = newState
         emitter.emitAll()
+        ret.emit('state changed', state)
         return delta
       }
     })

@@ -36,18 +36,14 @@ module.exports = {
   // TODO: test and re-enable this:
   incrementalValue (beforeState, newState, delta, cache = { value: [], indices: new Map() }) {
     const { value, indices } = cache
-    const [ , beforeRemoved, beforeEdges ] = beforeState
+    const [ , beforeRemoved ] = beforeState
     const [ , deltaRemoved, deltaEdges ] = delta
     const [ newAdded, newRemoved, newEdges ] = newState
 
     for (let removedId of deltaRemoved) {
-      console.log('# remove', newAdded.get(removedId))
       if ((!beforeRemoved.has(removedId)) && indices.has(removedId)) {
         const pos = indices.get(removedId)
-        console.log('# value before is', value)
-        console.log('# removing at pos', pos)
-        value.splice(pos, 1)
-        console.log('# value now is', value)
+        value.splice(pos - 1, 1)
         incrementIndexAfter(removedId, -1)
       }
     }
@@ -57,26 +53,25 @@ module.exports = {
     let pos = 0
 
     while (right) {
-      if (indices.has(right)) {
-        // already processed. Update current position
-        pos = indices.get(right)
-      } else {
+      if (indices.has(left)) {
+        pos = indices.get(left)
+      }
+      if (!indices.has(right)) {
         // new element
         if (!newRemoved.has(right)) {
-          console.log('# inserting', newAdded.get(right))
           // not removed
-          let beforeRight = beforeEdges.get(left)
+          let beforeRight = newEdges.get(left)
           while (beforeRight && (right < beforeRight)) {
             if (!newRemoved.has(beforeRight)) {
               pos += 1
             }
-            beforeRight = beforeEdges.get(beforeRight)
+            beforeRight = newEdges.get(beforeRight)
           }
 
           value.splice(pos, 0, newAdded.get(right))
           incrementIndexAfter(right)
+          pos += 1
         }
-        pos += 1
         indices.set(right, pos)
       }
 
@@ -85,13 +80,13 @@ module.exports = {
       right = deltaEdges.get(right)
     }
 
-    printIndices()
+    // printIndices()
 
-    return { returnValue: [...value], value, indices: indices}
+    return { returnValue: [...value], value, indices: indices }
 
     function incrementIndexAfter (_id, incBy = 1) {
       let id = _id
-      id = newEdges.get(id)
+      // id = newEdges.get(id)
       while (id) {
         if (indices.has(id)) {
           let newValue = indices.get(id) + incBy
@@ -101,13 +96,13 @@ module.exports = {
       }
     }
 
-    function printIndices () {
-      console.log('------ >')
-      for (let [key, pos] of indices) {
-        console.log(newAdded.get(key) + ' => ' + pos)
-      }
-      console.log('< ------')
-    }
+    // function printIndices () {
+    //   console.log('------ >')
+    //   for (let [key, pos] of indices) {
+    //     console.log(newAdded.get(key) + ' => ' + pos)
+    //   }
+    //   console.log('< ------')
+    // }
   },
 
   mutators: {
