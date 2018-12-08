@@ -9,6 +9,7 @@
 //
 // As defined in http://hal.upmc.fr/inria-00555588/document
 
+const { List } = require('immutable')
 const radix64 = require('radix-64')()
 
 module.exports = {
@@ -34,8 +35,8 @@ module.exports = {
   },
 
   // TODO: test and re-enable this:
-  incrementalValue (beforeState, newState, delta, cache = { value: [], indices: new Map() }) {
-    const { value, indices } = cache
+  incrementalValue (beforeState, newState, delta, cache = { value: List(), indices: new Map() }) {
+    let { value, indices } = cache
     const [ , beforeRemoved ] = beforeState
     const [ , deltaRemoved, deltaEdges ] = delta
     const [ newAdded, newRemoved, newEdges ] = newState
@@ -43,7 +44,7 @@ module.exports = {
     for (let removedId of deltaRemoved) {
       if ((!beforeRemoved.has(removedId)) && indices.has(removedId)) {
         const pos = indices.get(removedId)
-        value.splice(pos - 1, 1)
+        value = value.delete(pos - 1)
         incrementIndexAfter(removedId, -1)
       }
     }
@@ -68,7 +69,7 @@ module.exports = {
             beforeRight = newEdges.get(beforeRight)
           }
 
-          value.splice(pos, 0, newAdded.get(right))
+          value = value.insert(pos, newAdded.get(right))
           incrementIndexAfter(right)
           pos += 1
         }
@@ -82,7 +83,7 @@ module.exports = {
 
     // printIndices()
 
-    return { returnValue: [...value], value, indices: indices }
+    return { value, indices }
 
     function incrementIndexAfter (_id, incBy = 1) {
       let id = _id
