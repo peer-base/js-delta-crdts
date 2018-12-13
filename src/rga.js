@@ -10,7 +10,7 @@
 // As defined in http://hal.upmc.fr/inria-00555588/document
 
 const { List } = require('immutable')
-const radix64 = require('radix-64')()
+const { encode, decode } = require('delta-crdts-msgpack-codec')
 
 module.exports = {
   initial: () => [
@@ -62,7 +62,7 @@ module.exports = {
         if (!newRemoved.has(right)) {
           // not removed
           let beforeRight = newEdges.get(left)
-          while (beforeRight && (right < beforeRight)) {
+          while (beforeRight && (compareIds(beforeRight, right) > 0)) {
             if (!newRemoved.has(beforeRight)) {
               pos += 1
             }
@@ -108,7 +108,7 @@ module.exports = {
 
   mutators: {
     addRight (id, s, beforeVertex, value) {
-      const elemId = createUniqueId(id)
+      const elemId = createUniqueId(s, id)
       const edges = s[2]
       let l = beforeVertex
       let r = edges.get(beforeVertex)
@@ -126,7 +126,7 @@ module.exports = {
         last = edges.get(last)
       }
 
-      const elemId = createUniqueId(id)
+      const elemId = createUniqueId(state, id)
 
       const newAdded = new Map([[elemId, value]])
       if (added.has(last)) {
@@ -197,7 +197,7 @@ function join (s1, s2) {
       return
     }
 
-    while (right && (newKey < right)) {
+    while (right && (compareIds(right, newKey) > 0)) {
       leftEdge = right
       right = resultEdges.get(right)
     }
@@ -240,7 +240,7 @@ function insertAllAt (id, state, pos, values) {
   newEdges.set(null, left)
 
   values.forEach((value) => {
-    const newId = createUniqueId(id)
+    const newId = createUniqueId(state, id)
     newAdded.set(newId, value)
     newEdges.set(left, newId)
     left = newId
@@ -273,29 +273,32 @@ function removeAt (id, state, pos) {
   return remove(id, state, elementId)
 }
 
-function createUniqueId (id) {
-  if (!Buffer.isBuffer(id)) {
-    id = Buffer.from(id)
-  }
-
-  const timestamp = bufferFromUint(Date.now())
-
-  const random = bufferFromUint(Math.random() * Number.MAX_SAFE_INTEGER)
-
-  const uid = radix64Encode(Buffer.concat([timestamp, id, random]))
-  return uid
+function createUniqueId (state, nodeId) {
+  const [, , edges] = state
+  const pos = edges.size
+  return encode([pos, nodeId]).toString('base64')
 }
 
-function radix64Encode (buf) {
-  return radix64.encodeBuffer(buf)
-}
+function compareIds (_id1, _id2) {
+  const id1 = decode(Buffer.from(_id1, 'base64'))
+  const id2 = decode(Buffer.from(_id2, 'base64'))
+  const [pos1] = id1
+  const [pos2] = id2
+  let comparison = 0
 
-function bufferFromUint (uint) {
-  const target = new Array(4)
-  for (let i = target.length; i >= 0; i--) {
-    target[i] = uint & 255
-    uint = uint >>> 8
+  if (pos1 < pos2) {
+    comparison = -1
+  } else if (pos1 > pos2) {
+    comparison = 1
+  } else {
+    const [, nodeId1] = id1
+    const [, nodeId2] = id2
+    if (nodeId1 < nodeId2) {
+      comparison = -1
+    } else if (nodeId1 > nodeId2) {
+      comparison = 1
+    }
   }
-  // console.log(buffer)
-  return Buffer.from(target)
+
+  return comparison
 }

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run test:node && npm run test:browser",
     "test:node": "aegir test --target node",
-    "test:browser": "aegir test --target browser",
+    "test:browser": "AEGIR_BROWSERS=Chrome,Firefox aegir test --target browser",
     "lint": "aegir lint"
   },
   "author": "Pedro Teixeira <i@pgte.me>",
@@ -15,16 +15,15 @@
     "aegir": "^15.3.1",
     "chai": "^4.1.2",
     "delay": "^4.1.0",
-    "delta-crdts-msgpack-codec": "~0.2.0",
     "dirty-chai": "^2.0.1",
     "p-queue": "^3.0.0",
     "pre-commit": "^1.2.2"
   },
   "dependencies": {
     "array.prototype.flatmap": "^1.2.1",
+    "delta-crdts-msgpack-codec": "~0.2.0",
     "hash-it": "^4.0.3",
-    "immutable": "^4.0.0-rc.12",
-    "radix-64": "^1.0.4"
+    "immutable": "^4.0.0-rc.12"
   },
   "pre-commit": [
     "lint",
