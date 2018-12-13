@@ -5,9 +5,12 @@ const Queue = require('p-queue')
 
 const transmit = require('./transmit')
 
-const MAX_DELAY = 100
+const defaultOptions = {
+  maxDelay: 100
+}
 
-module.exports = () => {
+module.exports = (_options) => {
+  const options = Object.assign({}, defaultOptions, _options)
   const replicas = new Set()
   const deliverQueues = new Map()
 
@@ -24,7 +27,9 @@ module.exports = () => {
   }
 
   function deplete () {
-    return Promise.all([...replicas].map((replica) => queueFor(replica).onIdle()))
+    return Promise.all([...replicas].map((sourceReplica) => {
+      return Promise.all([...replicas].map((targetReplica) => queueFor(sourceReplica, targetReplica).onIdle()))
+    }))
   }
 
   return {
@@ -35,21 +40,22 @@ module.exports = () => {
 
   function pushDeltaToReplica (sourceReplica, targetReplica, _delta) {
     const delta = transmit(_delta)
-    return queueFor(sourceReplica).add(async () => {
+    return queueFor(sourceReplica, targetReplica).add(async () => {
       await delay(randomDelay())
       return targetReplica.apply(delta)
     })
   }
 
   function randomDelay () {
-    return Math.floor(Math.random() * MAX_DELAY)
+    return Math.floor(Math.random() * options.maxDelay)
   }
 
-  function queueFor (replica) {
-    let queue = deliverQueues.get(replica.id)
+  function queueFor (sourceReplica, targetReplica) {
+    const queueName = sourceReplica.id + '/' + targetReplica.id
+    let queue = deliverQueues.get(queueName)
     if (!queue) {
       queue = new Queue({ concurrency: 1 })
-      deliverQueues.set(replica.id, queue)
+      deliverQueues.set(queueName, queue)
     }
 
     return queue

@@ -10,10 +10,10 @@ const CRDT = require('../')
 const Network = require('./helpers/network')
 
 const MAX_REPLICAS = 10
-const MAX_OPS_PER_REPLICA = 20
+const MAX_OPS_PER_REPLICA = 100
 
 describe('rga hard', function () {
-  this.timeout(30000)
+  this.timeout(120000)
 
   let RGA
   let replicas = new Set()
@@ -21,7 +21,7 @@ describe('rga hard', function () {
 
   before(() => {
     RGA = CRDT('rga')
-    network = Network()
+    network = Network({ maxDelay: 50 })
 
     for (let i = 0; i < MAX_REPLICAS; i++) {
       const replica = RGA(String(i))
@@ -73,11 +73,8 @@ describe('rga hard', function () {
         let monotonic = MAX_OPS_PER_REPLICA
         for (let i = 0; i < MAX_OPS_PER_REPLICA; i++) {
           const arr = replica.value()
-          if (!arr.length) {
-            break
-          }
           let delta
-          const remove = (Math.random() >= 0.5)
+          const remove = arr.length && (Math.random() >= 0.5)
           if (remove) {
             // removeAt
             const index = Math.floor(Math.random() * arr.length)
@@ -94,7 +91,13 @@ describe('rga hard', function () {
             insertedValues.push(value)
             delta = replica.insertAt(index, value)
             arr.splice(index, 0, value)
-            expect(replica.value()).to.deep.equal(arr)
+            const newArray = replica.value()
+            try {
+              expect(newArray).to.deep.equal(arr)
+            } catch (err) {
+              console.log(`expected ${value} to be at pos ${index} and it was at pos ${newArray.indexOf(value)}`)
+              throw err
+            }
             network.pushDelta(replica, delta)
           }
         }
