@@ -189,4 +189,59 @@ describe('rga', () => {
       expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
     })
   })
+
+  describe('three way', () => {
+    let RGA = CRDT('rga')
+
+    let replica1, replica2, replica3
+    let state1, state2, delta3
+    before(() => {
+      replica1 = RGA('id1')
+      replica1.push('a')
+      replica1.push('b')
+      replica1.push('c')
+      state1 = replica1.state()
+      replica2 = RGA('id2')
+      replica2.push('d')
+      replica2.push('e')
+      replica2.push('f')
+      state2 = replica2.state()
+      replica3 = RGA('id2')
+      replica3.apply(state1)
+      replica3.apply(state2)
+      delta3 = replica3.insertAt(3, 'X')
+    })
+
+    it('states and deltas apply in original order', () => {
+      const replica = RGA('id')
+      replica.apply(state1)
+      replica.apply(state2)
+      replica.apply(delta3)
+      expect(replica.value().join('')).to.equal('defXabc')
+    })
+
+    it('states and deltas apply in modified order', () => {
+      const replica = RGA('id')
+      replica.apply(state2)
+      replica.apply(state1)
+      replica.apply(delta3)
+      expect(replica.value().join('')).to.equal('defXabc')
+    })
+
+    it('states and deltas apply, delta early', () => {
+      const replica = RGA('id')
+      replica.apply(state2)
+      replica.apply(delta3)
+      replica.apply(state1)
+      expect(replica.value().join('')).to.equal('defXabc')
+    })
+
+    it('states and deltas apply, delta first', () => {
+      const replica = RGA('id')
+      replica.apply(delta3)
+      replica.apply(state2)
+      replica.apply(state1)
+      expect(replica.value().join('')).to.equal('defXabc')
+    })
+  })
 })
