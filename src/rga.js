@@ -120,7 +120,7 @@ module.exports = {
     },
 
     push (id, state, value) {
-      const [added, removed, edges] = state
+      const [, removed, edges] = state
       let last = null
       while (edges.has(last) && edges.get(last)) {
         last = edges.get(last)
@@ -129,9 +129,6 @@ module.exports = {
       const elemId = createUniqueId(state, id)
 
       const newAdded = new Map([[elemId, value]])
-      if (added.has(last)) {
-        newAdded.set(last, added.get(last))
-      }
       const newRemoved = new Set([])
       if (removed.has(last)) {
         newRemoved.add(last)
@@ -148,7 +145,7 @@ module.exports = {
     insertAllAt,
 
     updateAt (id, state, pos, value) {
-      return join(removeAt(id, state, pos), insertAt(id, state, pos, value))
+      return join(insertAt(id, state, pos, value), removeAt(id, state, pos))
     }
   }
 }
@@ -176,6 +173,9 @@ function join (s1, s2) {
         // bypass this edge, already inserted
         edgesToAdd.delete(key)
       } else if (resultEdges.has(key)) {
+        if (!added.has(newValue)) {
+          throw new Error('delta depends on missing vertex')
+        }
         insertEdge(edge)
         edgesToAdd.delete(key)
       }
@@ -212,7 +212,7 @@ function insertAt (id, state, pos, value) {
 }
 
 function insertAllAt (id, state, pos, values) {
-  const [added, removed, edges] = state
+  const [, removed, edges] = state
   let i = 0
   let left = null
   while (i < pos && edges.has(left)) {
@@ -228,9 +228,6 @@ function insertAllAt (id, state, pos, values) {
   }
 
   const newAdded = new Map()
-  if (added.has(left)) {
-    newAdded.set(left, added.get(left))
-  }
   const newRemoved = new Set()
   if (removed.has(left)) {
     newRemoved.add(left)
