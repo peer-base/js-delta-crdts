@@ -190,7 +190,7 @@ describe('rga', () => {
     })
   })
 
-  describe('three way', () => {
+  describe('missing state', () => {
     let RGA = CRDT('rga')
 
     let replica1, replica2, replica3
@@ -259,6 +259,14 @@ describe('rga', () => {
       const replica = RGA('id')
       expect(() => {
         replica.apply(delta4)
+      }).to.throw(/delta depends on missing vertex/)
+    })
+
+    it('states and deltas apply, push addRight first', () => {
+      const delta = replica1.addRight(null, 'Z')
+      const replica = RGA('id')
+      expect(() => {
+        replica.apply(delta)
       }).to.throw(/delta depends on missing vertex/)
     })
   })
