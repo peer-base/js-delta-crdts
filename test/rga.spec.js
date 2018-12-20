@@ -188,6 +188,11 @@ describe('rga', () => {
       replica1.apply(transmit(replica2.state()))
       expect(replica1.value()).to.deep.equal(['c', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
     })
+
+    it('can insert multiple', () => {
+      replica1.insertAllAt(1, ['X', 'Y', 'Z'])
+      expect(replica1.value()).to.deep.equal(['c', 'X', 'Y', 'Z', 'B', 'g', 'g.2', 'g.1', 'h', 'e', 'f', 'm', 'n', 'k', 'l'])
+    })
   })
 
   describe('missing state', () => {
