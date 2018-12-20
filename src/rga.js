@@ -236,8 +236,8 @@ function insertAllAt (id, state, pos, values) {
   const newEdges = new Map()
   newEdges.set(null, left)
 
-  values.forEach((value) => {
-    const newId = createUniqueId(state, id)
+  values.forEach((value, index) => {
+    const newId = createUniqueId(state, id, index)
     newAdded.set(newId, value)
     newEdges.set(left, newId)
     left = newId
@@ -270,9 +270,9 @@ function removeAt (id, state, pos) {
   return remove(id, state, elementId)
 }
 
-function createUniqueId (state, nodeId) {
+function createUniqueId (state, nodeId, index = 0) {
   const [, , edges] = state
-  const pos = edges.size
+  const pos = edges.size + index
   return encode([pos, nodeId]).toString('base64')
 }
 
