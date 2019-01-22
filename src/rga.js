@@ -9,6 +9,7 @@
 //
 // As defined in http://hal.upmc.fr/inria-00555588/document
 
+const assert = require('assert')
 const { List } = require('immutable')
 const { encode, decode } = require('delta-crdts-msgpack-codec')
 
@@ -174,7 +175,7 @@ function join (s1, s2) {
         edgesToAdd.delete(key)
       } else if (resultEdges.has(key)) {
         if (!added.has(newValue)) {
-          throw new Error('delta depends on missing vertex')
+          // throw new Error('delta depends on missing vertex')
         }
         insertEdge(edge)
         edgesToAdd.delete(key)
@@ -284,16 +285,22 @@ function compareIds (_id1, _id2) {
   let comparison = 0
 
   if (pos1 < pos2) {
-    comparison = -1
-  } else if (pos1 > pos2) {
     comparison = 1
+  } else if (pos1 > pos2) {
+    comparison = -1
   } else {
     const [, nodeId1] = id1
     const [, nodeId2] = id2
-    if (nodeId1 < nodeId2) {
-      comparison = -1
-    } else if (nodeId1 > nodeId2) {
-      comparison = 1
+    if (typeof nodeId1 === 'object') {
+      // Buffer has a .compare() method
+      assert(nodeId1.compare, 'object comparison needs compare method')
+      comparison = nodeId1.compare(nodeId2)
+    } else {
+      if (nodeId1 < nodeId2) {
+        comparison = -1
+      } else if (nodeId1 > nodeId2) {
+        comparison = 1
+      }
     }
   }
 
