@@ -285,9 +285,9 @@ function compareIds (_id1, _id2) {
   let comparison = 0
 
   if (pos1 < pos2) {
-    comparison = -1
-  } else if (pos1 > pos2) {
     comparison = 1
+  } else if (pos1 > pos2) {
+    comparison = -1
   } else {
     const [, nodeId1] = id1
     const [, nodeId2] = id2
