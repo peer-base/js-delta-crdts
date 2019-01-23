@@ -195,6 +195,25 @@ describe('rga', () => {
     })
   })
 
+  describe('crdt ids', () => {
+    let RGA = CRDT('rga')
+
+    it('using Buffer for CRDT ids gives consistent order', () => {
+      const replica1 = RGA(Buffer.from('a'))
+      const replica2 = RGA(Buffer.from('b'))
+      const deltaA = replica1.push('a')
+      replica2.push('b')
+      replica2.apply(deltaA)
+      expect(replica2.value()).to.deep.equal(['b', 'a'])
+      const replica3 = RGA(Buffer.from('d'))
+      const replica4 = RGA(Buffer.from('c'))
+      replica3.push('d')
+      const deltaD = replica4.push('c')
+      replica3.apply(deltaD)
+      expect(replica3.value()).to.deep.equal(['d', 'c'])
+    })
+  })
+
   describe('missing state', () => {
     let RGA = CRDT('rga')
 
