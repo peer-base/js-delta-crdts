@@ -34,7 +34,7 @@ describe('ormap', () => {
       expect(ormap.value()).to.deep.equal({a: 2})
     })
 
-    it('can apply a causal CRDT', () => {
+    it('can apply a causal CRDT again', () => {
       ormap.applySub('a', 'ccounter', 'inc')
     })
 
