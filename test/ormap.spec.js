@@ -31,7 +31,7 @@ describe('ormap', () => {
     })
 
     it('can get value', () => {
-      expect(ormap.value()).to.deep.equal({a: 2})
+      expect(ormap.value()).to.deep.equal({ a: 2 })
     })
 
     it('can apply a causal CRDT again', () => {
@@ -39,7 +39,7 @@ describe('ormap', () => {
     })
 
     it('can get value', () => {
-      expect(ormap.value()).to.deep.equal({a: 3})
+      expect(ormap.value()).to.deep.equal({ a: 3 })
     })
 
     it('can remove', () => {
@@ -55,7 +55,7 @@ describe('ormap', () => {
     })
 
     it('can get value', () => {
-      expect(ormap.value()).to.deep.equal({b: new Set(['B'])})
+      expect(ormap.value()).to.deep.equal({ b: new Set(['B']) })
     })
   })
 
@@ -79,7 +79,7 @@ describe('ormap', () => {
     })
 
     it('each replica has its own values', () => {
-      expect(replica1.value()).to.deep.equal({a: new Set(['A']), b: new Set(['B']), c: new Set(['C'])})
+      expect(replica1.value()).to.deep.equal({ a: new Set(['A']), b: new Set(['B']), c: new Set(['C']) })
     })
 
     it('the first converges', () => {
@@ -87,7 +87,7 @@ describe('ormap', () => {
       expect(replica1.value()).to.deep.equal({
         a: new Set(['a', 'A']),
         b: new Set(['b', 'B']),
-        c: new Set(['c', 'C'])})
+        c: new Set(['c', 'C']) })
     })
 
     it('the second converges', () => {
@@ -95,7 +95,7 @@ describe('ormap', () => {
       expect(replica2.value()).to.deep.equal({
         a: new Set(['a', 'A']),
         b: new Set(['b', 'B']),
-        c: new Set(['c', 'C'])})
+        c: new Set(['c', 'C']) })
     })
 
     it('keeps causality', () => {

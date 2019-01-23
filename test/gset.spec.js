@@ -44,8 +44,8 @@ describe('gset', () => {
     let replica1, replica2
     let deltas = [[], []]
     const expectedChanges = {
-      id1: [{add: 'a'}, {add: 'b'}, {add: 'c'}, {add: 'd'}, {add: 'e'}],
-      id2: [{add: 'a'}, {add: 'd'}, {add: 'e'}, {add: 'b'}, {add: 'c'}]
+      id1: [{ add: 'a' }, { add: 'b' }, { add: 'c' }, { add: 'd' }, { add: 'e' }],
+      id2: [{ add: 'a' }, { add: 'd' }, { add: 'e' }, { add: 'b' }, { add: 'c' }]
     }
     before(() => {
       replica1 = GSet('id1')

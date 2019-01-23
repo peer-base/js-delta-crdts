@@ -35,7 +35,6 @@ module.exports = {
     return result
   },
 
-  // TODO: test and re-enable this:
   incrementalValue (beforeState, newState, delta, cache = { value: List(), indices: new Map() }) {
     let { value, indices } = cache
     const [ , beforeRemoved ] = beforeState

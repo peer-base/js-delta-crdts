@@ -7,7 +7,7 @@ module.exports = {
     for (let elem of s2) {
       if (!targetSet.has(elem)) {
         targetSet.add(elem)
-        this.changed({add: elem})
+        this.changed({ add: elem })
       }
     }
     return targetSet

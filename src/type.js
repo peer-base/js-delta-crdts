@@ -40,7 +40,7 @@ module.exports = (Type) => {
     }
 
     ret.apply = (delta) => {
-      const newState = Type.join.call(emitter, state, delta, {strict: true})
+      const newState = Type.join.call(emitter, state, delta, { strict: true })
       if (Type.incrementalValue) {
         valueCache = Type.incrementalValue(state, newState, delta, valueCache)
       }
