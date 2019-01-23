@@ -151,7 +151,7 @@ module.exports = {
   }
 }
 
-function join (s1, s2) {
+function join (s1, s2, options = {}) {
   const added = new Map([...s1[0], ...s2[0]])
   const removed = new Set([...s1[1], ...s2[1]])
 
@@ -174,8 +174,8 @@ function join (s1, s2) {
         // bypass this edge, already inserted
         edgesToAdd.delete(key)
       } else if (resultEdges.has(key)) {
-        if (!added.has(newValue)) {
-          // throw new Error('delta depends on missing vertex')
+        if (options.strict && !added.has(newValue)) {
+          throw new Error('delta depends on missing vertex')
         }
         insertEdge(edge)
         edgesToAdd.delete(key)
@@ -285,13 +285,13 @@ function compareIds (_id1, _id2) {
   let comparison = 0
 
   if (pos1 < pos2) {
-    comparison = 1
-  } else if (pos1 > pos2) {
     comparison = -1
+  } else if (pos1 > pos2) {
+    comparison = 1
   } else {
     const [, nodeId1] = id1
     const [, nodeId2] = id2
-    if (typeof nodeId1 === 'object') {
+    if (typeof nodeId1 === 'object' || typeof nodeId2 === 'object') {
       // Buffer has a .compare() method
       assert(nodeId1.compare, 'object comparison needs compare method')
       comparison = nodeId1.compare(nodeId2)
