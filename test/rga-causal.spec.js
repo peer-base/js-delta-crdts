@@ -10,7 +10,7 @@ const CRDTs = require('../')
 const RGA = CRDTs('rga')
 const rgaType = CRDTs.type('rga')
 
-describe('rga fail', () => {
+describe('rga causal', () => {
   let deltaP, deltaE, deltaA, deltaR
 
   before(() => {

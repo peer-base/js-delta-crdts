@@ -18,7 +18,7 @@ module.exports = {
     new Map([[null, null]]), // VA
     new Set(), // VR
     new Map([[null, null]]), // E
-    new Map() // UE
+    new Set() // UE
   ],
 
   join,
@@ -86,7 +86,7 @@ function join (s1, s2, options = {}) {
   const s2Edges = s2[2]
   const resultEdges = new Map(s1Edges)
 
-  const leftOutEdges = new Map([...(s1[3] || new Map()), ...(s2[3] || new Map())])
+  const unmergedEdges = new Set([...(s1[3] || new Set()), ...(s2[3] || new Set())])
 
   const edgesToAdd = new Map(s2Edges)
 
@@ -102,37 +102,37 @@ function join (s1, s2, options = {}) {
         // bypass this edge, already inserted
       } else if (resultEdges.has(key)) {
         if (!added.has(newValue)) {
-          leftOutEdges.set(key, newValue)
+          unmergedEdges.add(edge)
         } else {
           insertEdge(edge)
         }
       } else {
-        leftOutEdges.set(key, newValue)
+        unmergedEdges.add(edge)
       }
       edgesToAdd.delete(key)
     }
   }
 
-  if (leftOutEdges.size) {
+  if (unmergedEdges.size) {
     let progress = false
     do {
-      const countBefore = leftOutEdges.size
-      for (const edge of leftOutEdges) {
+      const countBefore = unmergedEdges.size
+      for (const edge of unmergedEdges) {
         const [key, newValue] = edge
         if (resultEdges.has(newValue)) {
           // bypass this edge, already inserted
-          leftOutEdges.delete(key)
+          unmergedEdges.delete(edge)
         } else if (resultEdges.has(key) && added.has(key)) {
           insertEdge(edge)
-          leftOutEdges.delete(key)
+          unmergedEdges.delete(edge)
         }
       }
 
-      progress = leftOutEdges.size < countBefore
+      progress = unmergedEdges.size < countBefore
     } while (progress)
   }
 
-  return [added, removed, resultEdges, leftOutEdges]
+  return [added, removed, resultEdges, unmergedEdges]
 
   function insertEdge (edge) {
     let [leftEdge, newKey] = edge
