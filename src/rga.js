@@ -63,7 +63,7 @@ module.exports = {
       const newRemoved = new Set()
       const newEdges = new Map([[last, elemId]])
 
-      return [newAdded, newRemoved, newEdges, (state[3] || new Map())]
+      return [newAdded, newRemoved, newEdges, new Map()]
     },
 
     remove,
