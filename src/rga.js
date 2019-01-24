@@ -2,22 +2,24 @@
 'use strict'
 
 // Replicable Growable Array (RGA)
-// State is represented by 3 sets:
+// State is represented by 4 sets:
 //   * Added Vertices (VA)
 //   * Removed Vertices (VR)
 //   * Edges (E)
+//   * Unmerged Edges (UE)
 //
 // As defined in http://hal.upmc.fr/inria-00555588/document
 
 const assert = require('assert')
-const { List } = require('immutable')
 const { encode, decode } = require('delta-crdts-msgpack-codec')
 
 module.exports = {
   initial: () => [
     new Map([[null, null]]), // VA
     new Set(), // VR
-    new Map([[null, null]])], // E
+    new Map([[null, null]]), // E
+    new Map() // UE
+  ],
 
   join,
 
@@ -35,77 +37,6 @@ module.exports = {
     return result
   },
 
-  incrementalValue (beforeState, newState, delta, cache = { value: List(), indices: new Map() }) {
-    let { value, indices } = cache
-    const [ , beforeRemoved ] = beforeState
-    const [ , deltaRemoved, deltaEdges ] = delta
-    const [ newAdded, newRemoved, newEdges ] = newState
-
-    for (let removedId of deltaRemoved) {
-      if ((!beforeRemoved.has(removedId)) && indices.has(removedId)) {
-        const pos = indices.get(removedId)
-        value = value.delete(pos - 1)
-        incrementIndexAfter(removedId, -1)
-      }
-    }
-
-    let left = null
-    let right = deltaEdges.get(left)
-    let pos = 0
-
-    while (right) {
-      if (indices.has(left)) {
-        pos = indices.get(left)
-      }
-      if (!indices.has(right)) {
-        // new element
-        if (!newRemoved.has(right)) {
-          // not removed
-          let beforeRight = newEdges.get(left)
-          while (beforeRight && (compareIds(beforeRight, right) > 0)) {
-            if (!newRemoved.has(beforeRight)) {
-              pos += 1
-            }
-            beforeRight = newEdges.get(beforeRight)
-          }
-
-          value = value.insert(pos, newAdded.get(right))
-          incrementIndexAfter(right)
-          pos += 1
-        }
-        indices.set(right, pos)
-      }
-
-      // continue iteration
-      left = right
-      right = deltaEdges.get(right)
-    }
-
-    // printIndices()
-
-    return { value, indices }
-
-    function incrementIndexAfter (_id, incBy = 1) {
-      let id = _id
-      // id = newEdges.get(id)
-      while (id) {
-        if (indices.has(id)) {
-          let newValue = indices.get(id) + incBy
-          indices.set(id, newValue)
-        }
-        id = newEdges.get(id)
-      }
-    }
-
-    // function printIndices () {
-    //   console.log('------ >')
-    //   for (let [key, pos] of indices) {
-    //     console.log(newAdded.get(key) + ' => ' + pos)
-    //   }
-    //   console.log('< ------')
-    // }
-  },
-
   mutators: {
     addRight (id, s, beforeVertex, value) {
       const elemId = createUniqueId(s, id)
@@ -116,11 +47,11 @@ module.exports = {
       newEdges.set(l, elemId)
       newEdges.set(elemId, r)
 
-      return [new Map([[elemId, value]]), new Set([]), newEdges]
+      return [new Map([[elemId, value]]), new Set([]), newEdges, (s[3] || new Map())]
     },
 
     push (id, state, value) {
-      const [, removed, edges] = state
+      const [, , edges] = state
       let last = null
       while (edges.has(last) && edges.get(last)) {
         last = edges.get(last)
@@ -129,13 +60,10 @@ module.exports = {
       const elemId = createUniqueId(state, id)
 
       const newAdded = new Map([[elemId, value]])
-      const newRemoved = new Set([])
-      if (removed.has(last)) {
-        newRemoved.add(last)
-      }
-      const newEdges = new Map([[null, last], [last, elemId], [elemId, null]])
+      const newRemoved = new Set()
+      const newEdges = new Map([[last, elemId]])
 
-      return [newAdded, newRemoved, newEdges]
+      return [newAdded, newRemoved, newEdges, (state[3] || new Map())]
     },
 
     remove,
@@ -158,6 +86,8 @@ function join (s1, s2, options = {}) {
   const s2Edges = s2[2]
   const resultEdges = new Map(s1Edges)
 
+  const leftOutEdges = new Map([...(s1[3] || new Map()), ...(s2[3] || new Map())])
+
   const edgesToAdd = new Map(s2Edges)
 
   if (!resultEdges.size) {
@@ -165,33 +95,49 @@ function join (s1, s2, options = {}) {
   }
 
   while (edgesToAdd.size > 0) {
-    const startSize = edgesToAdd.size
     for (const edge of edgesToAdd) {
       const [key, newValue] = edge
 
       if (resultEdges.has(newValue)) {
         // bypass this edge, already inserted
-        edgesToAdd.delete(key)
       } else if (resultEdges.has(key)) {
-        if (options.strict && !added.has(newValue)) {
-          throw new Error('delta depends on missing vertex')
+        if (!added.has(newValue)) {
+          leftOutEdges.set(key, newValue)
+        } else {
+          insertEdge(edge)
         }
-        insertEdge(edge)
-        edgesToAdd.delete(key)
+      } else {
+        leftOutEdges.set(key, newValue)
       }
-    }
-    if (startSize === edgesToAdd.size) {
-      throw new Error('could not reduce size of edges to add')
+      edgesToAdd.delete(key)
     }
   }
 
-  const newState = [added, removed, resultEdges]
-  return newState
+  if (leftOutEdges.size) {
+    let progress = false
+    do {
+      const countBefore = leftOutEdges.size
+      for (const edge of leftOutEdges) {
+        const [key, newValue] = edge
+        if (resultEdges.has(newValue)) {
+          // bypass this edge, already inserted
+          leftOutEdges.delete(key)
+        } else if (resultEdges.has(key) && added.has(key)) {
+          insertEdge(edge)
+          leftOutEdges.delete(key)
+        }
+      }
+
+      progress = leftOutEdges.size < countBefore
+    } while (progress)
+  }
+
+  return [added, removed, resultEdges, leftOutEdges]
 
   function insertEdge (edge) {
     let [leftEdge, newKey] = edge
 
-    let right = resultEdges.get(leftEdge)
+    let right = resultEdges.get(leftEdge) || null
 
     if (!newKey || right === newKey) {
       return
@@ -234,7 +180,6 @@ function insertAllAt (id, state, pos, values) {
   }
 
   const newEdges = new Map()
-  newEdges.set(null, left)
 
   values.forEach((value, index) => {
     const newId = createUniqueId(state, id, index)
@@ -242,13 +187,12 @@ function insertAllAt (id, state, pos, values) {
     newEdges.set(left, newId)
     left = newId
   })
-  newEdges.set(left, null)
 
-  return [newAdded, newRemoved, newEdges]
+  return [newAdded, newRemoved, newEdges, (state[3] || new Map())]
 }
 
 function remove (id, state, vertex) {
-  return [new Map(), new Set([vertex]), new Map()]
+  return [new Map(), new Set([vertex]), new Map(), (state[3] || new Map())]
 }
 
 function removeAt (id, state, pos) {

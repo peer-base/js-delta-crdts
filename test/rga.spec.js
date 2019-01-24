@@ -263,35 +263,5 @@ describe('rga', () => {
       replica.apply(delta4)
       expect(replica.value().join('')).to.equal('defXabcY')
     })
-
-    it('states and deltas apply, insertAt delta too early', () => {
-      const replica = RGA('id')
-      replica.apply(state1)
-      expect(() => {
-        replica.apply(delta3)
-      }).to.throw(/delta depends on missing vertex/)
-    })
-
-    it('states and deltas apply, insertAt delta first', () => {
-      const replica = RGA('id')
-      expect(() => {
-        replica.apply(delta3)
-      }).to.throw(/delta depends on missing vertex/)
-    })
-
-    it('states and deltas apply, push delta first', () => {
-      const replica = RGA('id')
-      expect(() => {
-        replica.apply(delta4)
-      }).to.throw(/delta depends on missing vertex/)
-    })
-
-    it('states and deltas apply, push addRight first', () => {
-      const delta = replica1.addRight(null, 'Z')
-      const replica = RGA('id')
-      expect(() => {
-        replica.apply(delta)
-      }).to.throw(/delta depends on missing vertex/)
-    })
   })
 })

@@ -95,7 +95,7 @@ describe('rga hard', function () {
             try {
               expect(newArray).to.deep.equal(arr)
             } catch (err) {
-              console.log(`expected ${value} to be at pos ${index} and it was at pos ${newArray.indexOf(value)}`)
+              console.error(`expected ${value} to be at pos ${index} and it was at pos ${newArray.indexOf(value)}`)
               throw err
             }
             network.pushDelta(replica, delta)
