@@ -145,7 +145,7 @@ function join (s1, s2, options = {}) {
 
     while (right && (compareIds(right, newKey) > 0)) {
       leftEdge = right
-      right = resultEdges.get(right)
+      right = resultEdges.get(right) || null
     }
 
     resultEdges.set(leftEdge, newKey)
