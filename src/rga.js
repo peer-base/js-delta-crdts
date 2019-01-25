@@ -47,7 +47,7 @@ module.exports = {
       newEdges.set(l, elemId)
       newEdges.set(elemId, r)
 
-      return [new Map([[elemId, value]]), new Set([]), newEdges, new Map()]
+      return [new Map([[elemId, value]]), new Set(), newEdges, new Set()]
     },
 
     push (id, state, value) {
@@ -63,7 +63,7 @@ module.exports = {
       const newRemoved = new Set()
       const newEdges = new Map([[last, elemId]])
 
-      return [newAdded, newRemoved, newEdges, new Map()]
+      return [newAdded, newRemoved, newEdges, new Set()]
     },
 
     remove,
@@ -188,11 +188,11 @@ function insertAllAt (id, state, pos, values) {
     left = newId
   })
 
-  return [newAdded, newRemoved, newEdges, new Map()]
+  return [newAdded, newRemoved, newEdges, new Set()]
 }
 
 function remove (id, state, vertex) {
-  return [new Map(), new Set([vertex]), new Map(), new Map()]
+  return [new Map(), new Set([vertex]), new Map(), new Set()]
 }
 
 function removeAt (id, state, pos) {
