@@ -10,112 +10,165 @@ const Combinations = require('allcombinations')
 const transmit = require('./helpers/transmit')
 
 const CRDT = require('../')
+const RGA = CRDT('rga')
 
+const MAX_ITERATIONS = 10
 const OP_COUNT_PER_NODE = 10
 const MAX_ANALYZED = 10000
 
 describe('rga permutations', function () {
   this.timeout(200000)
-  let RGA
-  let combinations
+
+  for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+    describe(`iteration ${iteration}`, () => {
+      let replicas
+      let allDeltas = []
+      let length = 0
+
+      before(() => {
+        replicas = [ RGA('id1'), RGA('id2'), RGA('id3') ]
+      })
+
+      describe(`push mutations (${iteration + 1})`, () => {
+        let combinations
+        let expectedResult
+        let newDeltas
+
+        before(() => {
+          const { deltas, expectedResult: _expectedResult } = pushMutations(replicas)
+          newDeltas = deltas
+          expectedResult = _expectedResult
+          expect(expectedResult.length).to.equal(length + OP_COUNT_PER_NODE * replicas.length)
+          length = expectedResult.length
+          combinations = Combinations(deltas)
+        })
+
+        after(() => {
+          allDeltas = allDeltas.concat(newDeltas)
+        })
+
+        it('all combinations lead to the same result', () => {
+          let iterations = 0
+          for (let deltas of combinations) {
+            const r = RGA('read')
+            for (let delta of deltas) {
+              r.apply(transmit(delta))
+            }
+
+            expect(r.value()).to.deep.equal(expectedResult)
+
+            if (++iterations === MAX_ANALYZED) {
+              break
+            }
+          }
+        })
+      })
+
+      describe('random mutations', () => {
+        let combinations
+        let newDeltas
+        let expectedResult
+
+        before(() => {
+          const { deltas, expectedResult: _expectedResult } = randomMutations(replicas, iteration)
+          newDeltas = deltas
+          expectedResult = _expectedResult
+          const r = RGA('read')
+          for (let delta of allDeltas) {
+            r.apply(transmit(delta))
+          }
+          for (let delta of deltas) {
+            r.apply(transmit(delta))
+          }
+          expect(r.value()).to.deep.equal(expectedResult)
+          length = expectedResult.length
+
+          combinations = Combinations(deltas)
+        })
+
+        after(() => {
+          allDeltas = allDeltas.concat(newDeltas)
+        })
+
+        it('all mutation combinations lead to the same result', () => {
+          let iterations = 0
+          for (let deltas of combinations) {
+            const r = RGA('read')
+            for (let delta of allDeltas) {
+              r.apply(transmit(delta))
+            }
+
+            for (let delta of deltas) {
+              r.apply(transmit(delta))
+            }
+
+            expect(r.value()).to.deep.equal(expectedResult)
+
+            if (++iterations === MAX_ANALYZED) {
+              break
+            }
+          }
+        })
+      })
+    })
+  }
+})
+
+function pushMutations (replicas) {
+  const deltas = []
+  replicas.forEach((replica, replicaIndex) => {
+    for (let i = 0; i < OP_COUNT_PER_NODE; i++) {
+      deltas.push(replica.push(`${replicaIndex}-${i}`))
+    }
+  })
+  for (let delta of deltas) {
+    replicas.forEach((replica) => {
+      replica.apply(transmit(delta))
+    })
+  }
+
   let expectedResult
 
-  before(() => {
-    RGA = CRDT('rga')
-    const deltas = []
-    const r1 = RGA('id1')
-    const r2 = RGA('id2')
-    for (let i = 0; i < OP_COUNT_PER_NODE; i++) {
-      deltas.push(r1.push('1-' + i))
-      deltas.push(r2.push('2-' + i))
+  for (let replica of replicas) {
+    if (!expectedResult) {
+      expectedResult = replica.value()
+    } else {
+      expect(replica.value()).to.deep.equal(expectedResult)
     }
-    for (let delta of deltas) {
-      r2.apply(delta)
-    }
+  }
 
-    expectedResult = r2.value()
-    expect(r2.value().length).to.equal(OP_COUNT_PER_NODE * 2)
-    combinations = Combinations(deltas)
-  })
+  return { deltas, expectedResult }
+}
 
-  it('all combinations lead to the same result', () => {
-    let iterations = 0
-    for (let deltas of combinations) {
-      const r = RGA('id3')
-      for (let delta of deltas) {
-        r.apply(transmit(delta))
-      }
-
-      expect(r.value()).to.deep.equal(expectedResult)
-
-      if (++iterations === MAX_ANALYZED) {
-        break
-      }
-    }
-  })
-
-  it('makes random mutations', () => {
-    RGA = CRDT('rga')
-    const deltas = []
-    const r1 = RGA('id1')
-    const r2 = RGA('id2')
-    for (let i = 0; i < OP_COUNT_PER_NODE; i++) {
-      const d1 = r1.push('1-' + i)
-      deltas.push(d1)
-      r2.apply(d1)
-
-      const d2 = r2.push('2-' + i)
-      deltas.push(d2)
-      r1.apply(d2)
-    }
-    for (let i = 0; i < OP_COUNT_PER_NODE; i++) {
-      let len = r1.value().length
+function randomMutations (replicas, iteration) {
+  const deltas = []
+  for (let i = 0; i < OP_COUNT_PER_NODE; i++) {
+    replicas.forEach((replica, replicaIndex) => {
+      let len = replica.value().length
       let index = Math.floor(Math.random() * len)
-      deltas.push(r1.removeAt(index))
+      deltas.push(replica.removeAt(index))
 
-      len = r1.value().length
+      len = replica.value().length
       index = Math.floor(Math.random() * len)
-      deltas.push(r1.insertAt(index, '1x-' + index))
+      deltas.push(replica.insertAt(index, `${replicaIndex}-${iteration}-${i}`))
+    })
+  }
 
-      len = r2.value().length
-      index = Math.floor(Math.random() * len)
-      deltas.push(r2.removeAt(index))
-
-      len = r2.value().length
-      index = Math.floor(Math.random() * len)
-      deltas.push(r2.insertAt(index, '2x-' + index))
+  for (let delta of deltas) {
+    for (let replica of replicas) {
+      replica.apply(transmit(delta))
     }
+  }
 
-    for (let delta of deltas) {
-      r1.apply(delta)
-      r2.apply(delta)
+  let expectedResult
+  for (let replica of replicas) {
+    const value = replica.value()
+    if (!expectedResult) {
+      expectedResult = value
+    } else {
+      expect(value).to.deep.equal(expectedResult)
     }
+  }
 
-    expectedResult = r2.value()
-    expect(r1.value()).to.deep.equal(expectedResult)
-
-    const r3 = RGA('id3')
-    for (let delta of deltas) {
-      r3.apply(transmit(delta))
-    }
-    expect(r3.value()).to.deep.equal(expectedResult)
-
-    combinations = Combinations(deltas)
-  })
-
-  it('all mutation combinations lead to the same result', () => {
-    let iterations = 0
-    for (let deltas of combinations) {
-      const r = RGA('id3')
-      for (let delta of deltas) {
-        r.apply(transmit(delta))
-      }
-
-      expect(r.value()).to.deep.equal(expectedResult)
-
-      if (++iterations === MAX_ANALYZED) {
-        break
-      }
-    }
-  })
-})
+  return { deltas, expectedResult }
+}
