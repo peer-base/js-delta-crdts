@@ -12,9 +12,9 @@ const transmit = require('./helpers/transmit')
 const CRDT = require('../')
 const RGA = CRDT('rga')
 
-const MAX_ITERATIONS = 10
+const MAX_ITERATIONS = 5
 const OP_COUNT_PER_NODE = 10
-const MAX_ANALYZED = 10000
+const MAX_ANALYZED = 50000
 
 describe('rga permutations', function () {
   this.timeout(200000)
