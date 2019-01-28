@@ -18,7 +18,8 @@
     "delay": "^4.1.0",
     "dirty-chai": "^2.0.1",
     "p-queue": "^3.0.0",
-    "pre-commit": "^1.2.2"
+    "pre-commit": "^1.2.2",
+    "shuffle-array": "^1.0.1"
   },
   "dependencies": {
     "array.prototype.flatmap": "^1.2.1",

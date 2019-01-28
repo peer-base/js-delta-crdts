@@ -7,6 +7,7 @@ const expect = chai.expect
 chai.use(dirtyChai)
 
 const Combinations = require('allcombinations')
+const shuffle = require('shuffle-array')
 const transmit = require('./helpers/transmit')
 
 const CRDT = require('../')
@@ -14,7 +15,7 @@ const RGA = CRDT('rga')
 
 const MAX_ITERATIONS = 5
 const OP_COUNT_PER_NODE = 10
-const MAX_ANALYZED = 10000
+const MAX_ANALYZED_PERMUTATIONS = 5000
 
 describe('rga permutations', function () {
   this.timeout(200000)
@@ -40,7 +41,7 @@ describe('rga permutations', function () {
           expectedResult = _expectedResult
           expect(expectedResult.length).to.equal(length + OP_COUNT_PER_NODE * replicas.length)
           length = expectedResult.length
-          combinations = Combinations(deltas)
+          combinations = Combinations(shuffle(deltas))
         })
 
         after(() => {
@@ -57,7 +58,7 @@ describe('rga permutations', function () {
 
             expect(r.value()).to.deep.equal(expectedResult)
 
-            if (++iterations === MAX_ANALYZED) {
+            if (++iterations === MAX_ANALYZED_PERMUTATIONS) {
               break
             }
           }
@@ -83,7 +84,7 @@ describe('rga permutations', function () {
           expect(r.value()).to.deep.equal(expectedResult)
           length = expectedResult.length
 
-          combinations = Combinations(deltas)
+          combinations = Combinations(shuffle(deltas))
         })
 
         after(() => {
@@ -104,7 +105,7 @@ describe('rga permutations', function () {
 
             expect(r.value()).to.deep.equal(expectedResult)
 
-            if (++iterations === MAX_ANALYZED) {
+            if (++iterations === MAX_ANALYZED_PERMUTATIONS) {
               break
             }
           }
