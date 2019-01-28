@@ -8,6 +8,7 @@ chai.use(dirtyChai)
 
 const Combinations = require('allcombinations')
 const shuffle = require('shuffle-array')
+const delay = require('delay')
 const transmit = require('./helpers/transmit')
 
 const CRDT = require('../')
@@ -15,7 +16,7 @@ const RGA = CRDT('rga')
 
 const MAX_ITERATIONS = 5
 const OP_COUNT_PER_NODE = 10
-const MAX_ANALYZED_PERMUTATIONS = 5000
+const MAX_ANALYZED_PERMUTATIONS = 1000
 
 describe('rga permutations', function () {
   this.timeout(200000)
@@ -48,7 +49,7 @@ describe('rga permutations', function () {
           allDeltas = allDeltas.concat(newDeltas)
         })
 
-        it('all combinations lead to the same result', () => {
+        it('all combinations lead to the same result', async () => {
           let iterations = 0
           for (let deltas of combinations) {
             const r = RGA('read')
@@ -61,6 +62,8 @@ describe('rga permutations', function () {
             if (++iterations === MAX_ANALYZED_PERMUTATIONS) {
               break
             }
+
+            await delay(0)
           }
         })
       })
@@ -91,7 +94,7 @@ describe('rga permutations', function () {
           allDeltas = allDeltas.concat(newDeltas)
         })
 
-        it('all mutation combinations lead to the same result', () => {
+        it('all mutation combinations lead to the same result', async () => {
           let iterations = 0
           for (let deltas of combinations) {
             const r = RGA('read')
@@ -108,6 +111,8 @@ describe('rga permutations', function () {
             if (++iterations === MAX_ANALYZED_PERMUTATIONS) {
               break
             }
+
+            await delay(0)
           }
         })
       })
