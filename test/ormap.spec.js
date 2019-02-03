@@ -82,6 +82,16 @@ describe('ormap', () => {
       expect(replica1.value()).to.deep.equal({ a: new Set(['A']), b: new Set(['B']), c: new Set(['C']) })
     })
 
+    it('changes can be raw joined', () => {
+      const state = ORMap('joiner').join(transmit(replica1.state()), transmit(replica2.state()))
+      const replica = ORMap('replica')
+      replica.apply(state)
+      expect(replica.value()).to.deep.equal({
+        a: new Set(['a', 'A']),
+        b: new Set(['b', 'B']),
+        c: new Set(['c', 'C']) })
+    })
+
     it('the first converges', () => {
       deltas[1].forEach((delta) => replica1.apply(transmit(delta)))
       expect(replica1.value()).to.deep.equal({

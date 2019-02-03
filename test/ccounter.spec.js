@@ -61,6 +61,13 @@ describe('ccounter', () => {
       deltas[1].push(replica2.inc())
     })
 
+    it('changes can be raw joined', () => {
+      const state = CCounter('joiner').join(transmit(replica1.state()), transmit(replica2.state()))
+      const replica = CCounter('replica')
+      replica.apply(state)
+      expect(replica.value()).to.equal(4)
+    })
+
     it('changes from one can be joined to the other', () => {
       deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
     })

@@ -57,6 +57,13 @@ describe('mvreg', () => {
       expect(Array.from(replica2.value()).sort()).to.deep.equal(['hello'])
     })
 
+    it('changes can be raw joined', () => {
+      const state = MVReg('joiner').join(transmit(replica1.state()), transmit(replica2.state()))
+      const replica = MVReg('replica')
+      replica.apply(state)
+      expect(Array.from(replica.value()).sort()).to.deep.equal(['hello', 'world'])
+    })
+
     it('changes from one can be joined to the other', () => {
       deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
     })

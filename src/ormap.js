@@ -7,7 +7,7 @@ const CRDT = require('./')
 
 module.exports = {
   initial () { return new DotMap() },
-  join (s1, s2) { return s1.join(s2) },
+  join (s1, s2) { return DotMap.join(s1, s2) },
   value (s) {
     const result = {}
     for (const [key, subState] of s.state) {

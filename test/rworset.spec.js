@@ -69,6 +69,13 @@ describe('rworset', () => {
       expect(Array.from(replica2.value()).sort()).to.deep.equal(['b', 'd', 'e'])
     })
 
+    it('changes can be raw joined', () => {
+      const state = RWORSet('joiner').join(transmit(replica1.state()), transmit(replica2.state()))
+      const replica = RWORSet('replica')
+      replica.apply(state)
+      expect(Array.from(replica.value()).sort()).to.deep.equal(['c', 'd', 'e'])
+    })
+
     it('changes from one can be joined to the other', () => {
       deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
     })

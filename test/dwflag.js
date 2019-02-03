@@ -56,6 +56,13 @@ describe('dwflag', () => {
       expect(replica2.value()).to.equal(true)
     })
 
+    it('changes can be raw joined', () => {
+      const state = DWFlag('joiner').join(transmit(replica1.state()), transmit(replica2.state()))
+      const replica = DWFlag('replica')
+      replica.apply(state)
+      expect(replica.value()).to.equal(false)
+    })
+
     it('changes from one can be joined to the other', () => {
       deltas[0].forEach((delta) => replica2.apply(transmit(delta)))
     })
