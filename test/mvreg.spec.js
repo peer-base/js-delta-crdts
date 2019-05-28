@@ -79,5 +79,15 @@ describe('mvreg', () => {
     it('and the second also converges', () => {
       expect(Array.from(replica2.value()).sort()).to.deep.equal(['hello', 'world'])
     })
+
+    it('binary ids also converge', () => {
+      const replicaA = MVReg(Buffer.from('idA'))
+      const deltaA = replicaA.write('a')
+      const replicaB = MVReg(Buffer.from('idB'))
+      replicaB.apply(deltaA)
+      const deltaB = replicaB.write('b')
+      replicaA.apply(deltaB)
+      expect(Array.from(replicaA.value()).sort()).to.deep.equal(['b'])
+    })
   })
 })
