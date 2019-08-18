@@ -1,6 +1,7 @@
 'use strict'
 
 const DotSet = require('./dot-set')
+const { encode } = require('delta-crdts-msgpack-codec')
 
 module.exports = {
   initial () { return new DotSet() },
@@ -14,9 +15,10 @@ module.exports = {
   },
   mutators: {
     write (id, s, value) {
+      const encodedId = encode(id).toString('base64')
       return s.join(
         s.removeAll(),
-        s.add(id, value))
+        s.add(encodedId, value))
     }
   }
 }
