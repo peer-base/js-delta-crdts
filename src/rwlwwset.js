@@ -1,6 +1,7 @@
 'use strict'
 
 const lexjoin = require('./lexjoin')
+const objectKey = require('./object-key')
 
 module.exports = {
   initial () { return new Map() },
@@ -22,7 +23,7 @@ module.exports = {
   },
   value (s) {
     const res = new Set()
-    for (let [value, [, b]] of s) {
+    for (let [, [, b, value]] of s) {
       if (!b) {
         res.add(value)
       }
@@ -37,7 +38,8 @@ module.exports = {
 
 function addRemove (s, ts, val, b) {
   const res = new Map()
-  res.set(val, [ts, b])
+  const key = objectKey(val)
+  res.set(key, [ts, b, val])
 
   return res
 }
