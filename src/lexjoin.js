@@ -6,11 +6,14 @@ module.exports = (l, r, join, greaterThan) => {
 
   if (!greaterThan) { greaterThan = defaultGreaterThan }
 
-  if (greaterThan(l[0], r[0])) { return l }
-  if (greaterThan(r[0], l[0])) { return r }
+  const [lh, ...lt] = l
+  const [rh, ...rt] = r
+
+  if (greaterThan(lh, rh)) { return l }
+  if (greaterThan(rh, lh)) { return r }
 
   // First is equal, so join second
-  return [l[0], join(l[1], r[1])]
+  return [lh, ...join(lt, rt)]
 }
 
 function defaultGreaterThan (a, b) {

@@ -40,6 +40,18 @@ describe('rwlwwset', () => {
     it('is now empty', () => {
       expect(rwlwwset.value().size).to.equal(0)
     })
+
+    it('deduplicates object with id', () => {
+      rwlwwset.add(3, { value: 'AAA' })
+      rwlwwset.add(4, { value: 'AAA' })
+      expect(rwlwwset.value().size).to.equal(1)
+      expect(rwlwwset.value()).to.deep.equal(new Set([{ value: 'AAA' }]))
+    })
+
+    it('can remove', () => {
+      rwlwwset.remove(5, { value: 'AAA' })
+      expect(rwlwwset.value().size).to.equal(0)
+    })
   })
 
   describe('together', () => {
