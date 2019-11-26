@@ -3,6 +3,10 @@
   "version": "0.10.3",
   "description": "Delta-based State CRDTs",
   "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ipfs-shipyard/js-delta-crdts"
+  },
   "scripts": {
     "test": "npm run test:node && npm run test:browser",
     "test:node": "aegir test --target node",
